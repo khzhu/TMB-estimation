@@ -2,8 +2,6 @@ process FASTQC {
     tag "$meta.id"
     label 'process_medium'
 
-    container "~/ycga_work/shared/singularity/fastqc-0.12.1.simg"
-
     input:
     tuple val(meta), path(reads)
 

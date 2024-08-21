@@ -2,8 +2,6 @@ process TRIMMOMATIC {
     tag "$meta.id"
     label 'process_medium'
 
-    container "~/ycga_work/shared/singularity/trimmomatic-0.38.simg"
-
     input:
     tuple val(meta), path(reads)
 
