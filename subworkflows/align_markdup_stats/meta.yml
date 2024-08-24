@@ -1,0 +1,61 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/subworkflows/yaml-schema.json
+name: fastq_align_markdup_stats
+description: Align reads to a reference genome using bwa then deduplicate with sambamba
+keywords:
+  - align
+  - fasta
+  - genome
+  - reference
+components:
+  - bwa/mem
+  - sambamba/markdup
+  - sambamba/flagstat
+  - samtools/sort
+input:
+  - ch_reads:
+      description: |
+        List of input FastQ files of size 1 and 2 for single-end and paired-end data,
+        respectively.
+        Structure: [ val(meta), [ path(reads) ] ]
+  - ch_index:
+      description: |
+        BWA genome index files
+        Structure: [ val(meta), path(index) ]
+  - val_sort_bam:
+      type: boolean
+      description: If true bwa modules sort resulting bam files
+      pattern: "true|false"
+  - ch_fasta:
+      type: file
+      description: |
+        Optional reference fasta file. This only needs to be given if val_sort_bam = true.
+        Structure: [ val(meta), path(fasta) ]
+output:
+  - bam:
+      description: |
+        BAM file produced by bwa and de-duplicated by sambamba
+        Structure: [ val(meta), path(bam) ]
+  - bai:
+      description: |
+        BAI index of the deduplicated BAM file
+        Structure: [ val(meta), path(bai) ]
+  - cram:
+      description: |
+        CRAM file ordered by samtools
+        Structure: [ val(meta), path(cram) ]
+  - crai:
+      description: |
+        CRAI index of the ordered CRAM file
+        Structure: [ val(meta), path(crai) ]
+  - flagstat:
+      description: |
+        File containing sambamba flagstat output
+        Structure: [ val(meta), path(flagstat) ]
+  - versions:
+      description: |
+        Files containing software versions
+        Structure: [ path(versions.yml) ]
+authors:
+  - "@KelseyZhu"
+maintainers:
+  - "@KelseyZhu"

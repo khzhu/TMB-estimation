@@ -1,0 +1,91 @@
+name: "fastq_trim_fastqc"
+description: Read QC, trimming and read qc
+keywords:
+  - qc
+  - quality_control
+  - adapters
+  - trimming
+  - fastq
+components:
+  - fastqc
+  - trimmomatic
+input:
+  - ch_reads:
+      type: file
+      description: |
+        Structure: [ val(meta), path (reads) ]
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ], List of input FastQ files of size 1 and 2 for single-end and paired-end data,
+        respectively.
+  - ch_adapter_fasta:
+      type: file
+      description: |
+        Structure: path(adapter_fasta)
+        File in FASTA format containing possible adapters to remove.
+  - val_skip_fastqc:
+      type: boolean
+      description: |
+        Structure: val(skip_fastqc)
+        skip the fastqc process if true
+  - val_skip_trim:
+      type: boolean
+      description: |
+        Structure: val(skip_trim)
+        skip the trimmomatic process if true
+output:
+  - meta:
+      type: value
+      description: Groovy Map containing sample information e.g. [ id:'test', single_end:false ]
+  - reads:
+      type: file
+      description: |
+        Structure: [ val(meta), path(reads) ]
+        The trimmed fastq reads
+  - trim_log:
+      type: file
+      description: |
+        Structure: [ val(meta), path(trim_log) ]
+        fastq log file
+  - out_log:
+      type: file
+      description: |
+        Structure: [ val(meta), path(out_log) ]
+        out log file
+  - trim_summary:
+      type: file
+      description: |
+        Structure: [ val(meta), path(trim_summary) ]
+        Trimmomatic summary file
+  - unpaired_reads:
+      type: file
+      description: |
+        Structure: [ val(meta), path(unpaired_reads) ]
+        Unpaired reads
+  - fastqc_raw_html:
+      type: file
+      description: |
+        Structure: [ val(meta), path(fastqc_raw_html) ]
+        Raw fastQC report
+  - fastqc_raw_zip:
+      type: file
+      description: |
+        Structure: [ val(meta), path(fastqc_raw_zip) ]
+        Raw fastQC report archive
+  - fastqc_trim_html:
+      type: file
+      description: |
+        Structure: [ val(meta), path(fastqc_trim_html) ]
+        Trimmed fastQC report
+  - fastqc_trim_zip:
+      type: file
+      description: |
+        Structure: [ val(meta), path(fastqc_trim_zip) ]
+        Trimmed fastQC report archive
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@KelseyZhu"
+maintainers:
+  - "@KelseyZhu"
