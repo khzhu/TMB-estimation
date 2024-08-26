@@ -15,15 +15,20 @@ input:
         List of input FastQ files of size 1 and 2 for single-end and paired-end data,
         respectively.
         Structure: [ val(meta), [ path(reads) ] ]
-  - val_sort_bam:
-      type: boolean
-      description: If true bwa modules sort resulting bam files
-      pattern: "true|false"
+  - ch_index:
+      type: path
+      description: |
+        path to bwa index files for the reference fasta file.
+        Structure: [ val(meta), path(bwa_index) ]
   - ch_fasta:
       type: file
       description: |
         Optional reference fasta file. This only needs to be given if val_sort_bam = true.
         Structure: [ val(meta), path(fasta) ]
+  - val_sort_bam:
+      type: boolean
+      description: If true bwa modules sort resulting bam files
+      pattern: "true|false"
 output:
   - bam:
       description: |

@@ -10,8 +10,8 @@ workflow FASTQ_ALIGN_MARKDUP_STATS {
     take:
     ch_reads        // channel (mandatory): [ val(meta), [ path(reads) ] ]
     ch_index        // channel (mandatory): [ val(meta2), [ path(index) ] ]
+    ch_fasta         // channel (optional) : [ val(meta3), path(fasta) ]
     val_sort_bam    // boolean (mandatory): true or false
-    ch_fai          // channel (optional) : [ val(meta3), path(fai) ]
 
     main:
     ch_versions = Channel.empty()

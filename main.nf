@@ -27,10 +27,10 @@ workflow {
     ch_samples = Channel.from(multi_params.collect{ it -> tuple([ id: it.specimen_num, single_end:false ],
                 [ file(it.read1, checkIfExists: true), file(it.read2, checkIfExists: true) ]) })
     ch_adapter_fasta = Channel.fromPath(params.adapter_fasta)
-    ch_fasta = Channel.value([
-        [id:'fasta'],
-        file(params.reference_file, checkIfExists: true),
-    ])
+    ch_fasta = Channel.fromPath(params.reference_file, checkIfExists: true)
+    ch_fai = Channel.fromPath(params.fai, checkIfExists: true)
+    ch_bwa_index = Channel.fromPath(params.bwa_index, checkIfExists: true)
+    ch_dict = Channel.fromPath(params.dict, checkIfExists: true)
     ch_target_bed = Channel.fromPath(params.exome_plus_tumor_panel_bed, checkIfExists: true)
     ch_known_indel_sites = Channel.fromPath(params.known_indel_vcf)
     ch_known_indel_sites_tbi = Channel.fromPath(params.known_indel_vcf_tbi)
@@ -45,17 +45,12 @@ workflow {
     skip_fastp        = false
     val_sort_bam      = true
 
-    // index reference genome
-    INDEX_GENOME ( ch_fasta )
-    ch_versions = ch_versions.mix( INDEX_GENOME.out.versions )
-
     // Trim raw seqeunce reads
     FASTQ_FASTP_FASTQC ( ch_samples, ch_adapter_fasta, save_trimmed_fail, save_merged, skip_fastp, skip_fastqc )
     ch_versions = ch_versions.mix( FASTQ_FASTP_FASTQC.out.versions )
 
     // Mapping trimmed reads to hg19 genome
-    FASTQ_ALIGN_MARKDUP_STATS ( FASTQ_FASTP_FASTQC.out.reads, INDEX_GENOME.out.index,
-                                val_sort_bam, ch_fasta)
+    FASTQ_ALIGN_MARKDUP_STATS ( FASTQ_FASTP_FASTQC.out.reads, ch_bwa_index, ch_fasta, val_sort_bam)
     ch_versions = ch_versions.mix( FASTQ_ALIGN_MARKDUP_STATS.out.versions )
 
     BAM_RECALIBRATION ( tuple(FASTQ_ALIGN_MARKDUP_STATS.out.bam, FASTQ_ALIGN_MARKDUP_STATS.out.bam.bai, ch_target_bed),
