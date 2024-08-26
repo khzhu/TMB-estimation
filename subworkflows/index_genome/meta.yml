@@ -1,0 +1,46 @@
+name: "index_genome"
+description: |
+  Generate bwa/samtools index and seqeuece dictionary for a reference genome.
+  Please note, this workflow requires input CHANNELS. Input values will cause errors
+keywords:
+  - fasta
+  - index
+  - bwamem
+  - gatk4
+  - samtools
+components:
+  - bwa/index
+  - samtools/faidx
+  - gatk4/createseqdict
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing reference information
+        e.g. [ id:'test' ]
+  - fasta:
+      type: file
+      description: Reference genome fasta file
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing genome reference information
+        e.g. [ id:'test' ]
+  - index:
+      type: path
+      description: path for bwa index files
+  - fai:
+      type: file
+      description: samtools index for a reference genome
+  - dict:
+      type: file
+      description: gatk sequence dictionary for a reference genome
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@kelseyzhu"
+maintainers:
+  - "@kelseyzhu"
