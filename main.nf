@@ -3,7 +3,7 @@ import groovy.json.JsonSlurper
 
 include { FASTQ_FASTP_FASTQC        } from './subworkflows/fastq_fastp_fastqc/main'
 include { FASTQ_ALIGN_MARKDUP_STATS } from './subworkflows/align_markdup_stats/main'
-include { INDEX_GENOME              } from '../subworkflows/index_genome/main'
+include { INDEX_GENOME              } from './subworkflows/index_genome/main'
 include { BAM_RECALIBRATION         } from './subworkflows/bam_recalibration/main'
 
 // main workflow
