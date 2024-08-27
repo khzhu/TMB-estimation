@@ -28,9 +28,9 @@ workflow {
                 [ file(it.read1, checkIfExists: true), file(it.read2, checkIfExists: true) ]) })
     ch_adapter_fasta = Channel.fromPath(params.adapter_fasta)
     ch_fasta = Channel.fromPath(params.reference_file, checkIfExists: true)
-    ch_fai = Channel.fromPath(params.fai, checkIfExists: true)
+    ch_ref_fai = Channel.fromPath(params.ref_fai, checkIfExists: true)
     ch_bwa_index = Channel.fromPath(params.bwa_index, checkIfExists: true)
-    ch_dict = Channel.fromPath(params.dict, checkIfExists: true)
+    ch_ref_dict = Channel.fromPath(params.ref_dict, checkIfExists: true)
     ch_target_bed = Channel.fromPath(params.exome_plus_tumor_panel_bed, checkIfExists: true)
     ch_known_indel_sites = Channel.fromPath(params.known_indel_vcf)
     ch_known_indel_sites_tbi = Channel.fromPath(params.known_indel_vcf_tbi)
@@ -53,8 +53,8 @@ workflow {
     FASTQ_ALIGN_MARKDUP_STATS ( FASTQ_FASTP_FASTQC.out.reads, ch_bwa_index, ch_fasta, val_sort_bam)
     ch_versions = ch_versions.mix( FASTQ_ALIGN_MARKDUP_STATS.out.versions )
 
-    BAM_RECALIBRATION ( tuple(FASTQ_ALIGN_MARKDUP_STATS.out.bam, FASTQ_ALIGN_MARKDUP_STATS.out.bam.bai, ch_target_bed),
-        ch_fasta, INDEX_GENOME.out.fai, INDEX_GENOME.out.dict, ch_known_snp_sites.join(ch_known_indel_sites),
+    BAM_RECALIBRATION ( [FASTQ_ALIGN_MARKDUP_STATS.out.bam, FASTQ_ALIGN_MARKDUP_STATS.out.bai, ch_target_bed],
+        ch_fasta, ch_ref_fai, ch_ref_dict, ch_known_snp_sites.join(ch_known_indel_sites),
         ch_known_snp_sites_tbi.join(ch_known_indel_sites_tbi))
     ch_versions = ch_versions.mix( BAM_RECALIBRATION.out.versions )
 }
