@@ -22,7 +22,7 @@ workflow BAM_RECALIBRATION {
     ch_versions = Channel.empty()
 
     GATK4_BASERECALIBRATOR ( ch_bam_bai_bed, ch_fasta, ch_fai, ch_dict, ch_known_sites, ch_known_sites_tbi)
-    ch_versions = ch_versions.mix(PICARD_MARKDUPLICATES.out.versions)
+    ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
 
     GATK4_APPLYBQSR ( ch_bam_bai_bed.mix(GATK4_BASERECALIBRATOR.out.table), ch_fasta, ch_fai, ch_dict)
 
