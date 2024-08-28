@@ -1,9 +1,11 @@
 #!/usr/bin/env nextflow
+nextflow.enable.dsl=2
+
 import groovy.json.JsonSlurper
 
+include { INDEX_GENOME              } from './subworkflows/index_genome/main'
 include { FASTQ_FASTP_FASTQC        } from './subworkflows/fastq_fastp_fastqc/main'
 include { FASTQ_ALIGN_MARKDUP_STATS } from './subworkflows/align_markdup_stats/main'
-include { INDEX_GENOME              } from './subworkflows/index_genome/main'
 include { BAM_RECALIBRATION         } from './subworkflows/bam_recalibration/main'
 
 // main workflow
@@ -28,9 +30,7 @@ workflow {
                 [ file(it.read1, checkIfExists: true), file(it.read2, checkIfExists: true) ]) })
     ch_adapter_fasta = Channel.fromPath(params.adapter_fasta)
     ch_fasta = Channel.fromPath(params.reference_file, checkIfExists: true)
-    ch_ref_fai = Channel.fromPath(params.ref_fai, checkIfExists: true)
-    ch_bwa_index = Channel.fromPath(params.bwa_index, checkIfExists: true)
-    ch_ref_dict = Channel.fromPath(params.ref_dict, checkIfExists: true)
+
     ch_target_bed = Channel.fromPath(params.exome_plus_tumor_panel_bed, checkIfExists: true)
     ch_known_indel_sites = Channel.fromPath(params.known_indel_vcf)
     ch_known_indel_sites_tbi = Channel.fromPath(params.known_indel_vcf_tbi)
@@ -45,16 +45,11 @@ workflow {
     skip_fastp        = false
     val_sort_bam      = true
 
+    // index genome reference
+    INDEX_GENOME ( [ id:'fasta' ], ch_fasta)
+
     // Trim raw seqeunce reads
     FASTQ_FASTP_FASTQC ( ch_samples, ch_adapter_fasta, save_trimmed_fail, save_merged, skip_fastp, skip_fastqc )
     ch_versions = ch_versions.mix( FASTQ_FASTP_FASTQC.out.versions )
 
-    // Mapping trimmed reads to hg19 genome
-    FASTQ_ALIGN_MARKDUP_STATS ( FASTQ_FASTP_FASTQC.out.reads, ch_bwa_index, ch_fasta, val_sort_bam)
-    ch_versions = ch_versions.mix( FASTQ_ALIGN_MARKDUP_STATS.out.versions )
-
-    BAM_RECALIBRATION ( [FASTQ_ALIGN_MARKDUP_STATS.out.bam, FASTQ_ALIGN_MARKDUP_STATS.out.bai, ch_target_bed],
-        ch_fasta, ch_ref_fai, ch_ref_dict, ch_known_snp_sites.join(ch_known_indel_sites),
-        ch_known_snp_sites_tbi.join(ch_known_indel_sites_tbi))
-    ch_versions = ch_versions.mix( BAM_RECALIBRATION.out.versions )
 }
