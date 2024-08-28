@@ -29,26 +29,28 @@ workflow {
     ch_samples = Channel.from(multi_params.collect{ it -> tuple([ id: it.specimen_num, single_end:false ],
                 [ file(it.read1, checkIfExists: true), file(it.read2, checkIfExists: true) ]) })
     ch_adapter_fasta = Channel.fromPath(params.adapter_fasta)
-
+    // annotations
     ch_target_bed = Channel.fromPath(params.exome_plus_tumor_panel_bed, checkIfExists: true)
     ch_known_indel_sites = Channel.fromPath(params.known_indel_vcf)
     ch_known_indel_sites_tbi = Channel.fromPath(params.known_indel_vcf_tbi)
     ch_known_snp_sites = Channel.fromPath(params.known_snp_vcf)
     ch_known_snp_sites_tbi = Channel.fromPath(params.known_snp_vcf_tbi)
-    ch_versions = Channel.empty()
 
-    // With paired-end data
-    save_trimmed_fail = false
-    save_merged       = false
-    skip_fastqc       = false
-    skip_fastp        = false
-    val_sort_bam      = true
+    ch_versions = Channel.empty()
 
     // index genome reference
     INDEX_GENOME ( [[ id:'g1k_v37', single_end:false ], file(params.reference_file, checkIfExists: true)])
 
-    // Trim raw seqeunce reads
-    FASTQ_FASTP_FASTQC ( ch_samples, ch_adapter_fasta, save_trimmed_fail, save_merged, skip_fastp, skip_fastqc )
+    // Trim raw seqeunce reads with paired-end data
+    FASTQ_FASTP_FASTQC ( ch_samples, ch_adapter_fasta, params.save_trimmed_fail,
+                        params.save_merged, params.skip_fastp, params.skip_fastqc )
     ch_versions = ch_versions.mix( FASTQ_FASTP_FASTQC.out.versions )
+
+    // Align to genome
+    FASTQ_ALIGN_MARKDUP_STATS ( [ FASTQ_FASTP_FASTQC.out.reads, INDEX_GENOME.out.bwa_index,
+			    [[ id:'g1k_v37', single_end:false ], file(params.reference_file, checkIfExists: true)],
+                 params.val_sort_bam] )
+    ch_versions = ch_versions.mix( FASTQ_ALIGN_MARKDUP_STATS.out.versions )
+
 
 }
