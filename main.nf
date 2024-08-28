@@ -29,7 +29,6 @@ workflow {
     ch_samples = Channel.from(multi_params.collect{ it -> tuple([ id: it.specimen_num, single_end:false ],
                 [ file(it.read1, checkIfExists: true), file(it.read2, checkIfExists: true) ]) })
     ch_adapter_fasta = Channel.fromPath(params.adapter_fasta)
-    ch_fasta = Channel.fromPath(params.reference_file, checkIfExists: true)
 
     ch_target_bed = Channel.fromPath(params.exome_plus_tumor_panel_bed, checkIfExists: true)
     ch_known_indel_sites = Channel.fromPath(params.known_indel_vcf)
@@ -46,7 +45,7 @@ workflow {
     val_sort_bam      = true
 
     // index genome reference
-    INDEX_GENOME ( [ id:'fasta' ], ch_fasta)
+    INDEX_GENOME ( [[ id:'g1k_v37', single_end:false ], file(params.reference_file, checkIfExists: true)])
 
     // Trim raw seqeunce reads
     FASTQ_FASTP_FASTQC ( ch_samples, ch_adapter_fasta, save_trimmed_fail, save_merged, skip_fastp, skip_fastqc )

@@ -16,11 +16,11 @@ input:
   - meta:
       type: map
       description: |
-        Groovy Map containing reference information
-        e.g. [ id:'test' ]
+        Groovy Map containing reference information.
+        e.g. [ id:'test', single_end:false ]
   - fasta:
       type: file
-      description: Reference genome fasta file
+      description: Input genome fasta file
 output:
   - meta:
       type: map
