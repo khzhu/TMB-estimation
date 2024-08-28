@@ -47,10 +47,10 @@ workflow {
     ch_versions = ch_versions.mix( FASTQ_FASTP_FASTQC.out.versions )
 
     // Align to genome
-    FASTQ_ALIGN_MARKDUP_STATS ( [ FASTQ_FASTP_FASTQC.out.reads, INDEX_GENOME.out.bwa_index,
+    FASTQ_ALIGN_MARKDUP_STATS ( FASTQ_FASTP_FASTQC.out.reads,
+                INDEX_GENOME.out.index,
 			    [[ id:'g1k_v37', single_end:false ], file(params.reference_file, checkIfExists: true)],
-                 params.val_sort_bam] )
+                 params.val_sort_bam )
     ch_versions = ch_versions.mix( FASTQ_ALIGN_MARKDUP_STATS.out.versions )
-
 
 }
