@@ -35,10 +35,11 @@ process BWA_MEM {
 
     bwa mem \\
         $args \\
+        -R '@RG\\tID:${meta.id}\\tSM:${meta.id}\\tLB:${meta.id}\\tPL:ILLUMINA' \\
         -t $task.cpus \\
         \$INDEX \\
         $reads \\
-        | tee out.sam | samtools $samtools_command $args2 ${reference} --threads $task.cpus -o ${prefix}.${extension} -
+        | samtools $samtools_command ${reference} --threads $task.cpus $args2 - > ${prefix}.${extension}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

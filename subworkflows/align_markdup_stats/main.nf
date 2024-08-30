@@ -1,8 +1,9 @@
 //
-// Alignment with BWA
+// Alignment to genome with BWA and sort reads by SAMBAMBA
 //
 
 include { BWA_MEM           } from '../../modules/bwa/mem/main'
+include { SAMBAMBA_SORT     } from '../../modules/sambamba/sort/main'
 include { SAMBAMBA_MARKDUP  } from '../../modules/sambamba/markdup/main'
 include { SAMBAMBA_FLAGSTAT } from '../../modules/sambamba/flagstat/main'
 
@@ -23,16 +24,20 @@ workflow FASTQ_ALIGN_MARKDUP_STATS {
     ch_versions = ch_versions.mix(BWA_MEM.out.versions)
 
     //
+    // Run sambamba sort
+    //
+    SAMBAMBA_SORT ( BWA_MEM.out.bam )
+
+    //
     // Run sambamba deduplicate and flagstat
     //
-    SAMBAMBA_MARKDUP ( BWA_MEM.out.bam )
+    SAMBAMBA_MARKDUP ( SAMBAMBA_SORT.out.bam )
     ch_versions = ch_versions.mix(SAMBAMBA_MARKDUP.out.versions)
 
     //
     // Generate sambamba flagstat
     //
     SAMBAMBA_FLAGSTAT ( SAMBAMBA_MARKDUP.out.bam )
-    ch_versions = ch_versions.mix(SAMBAMBA_FLAGSTAT.out.versions)
 
     emit:
     bam      = SAMBAMBA_MARKDUP.out.bam     // channel: [ val(meta), path(bam) ]
