@@ -11,7 +11,7 @@ include { GATK4_CREATESEQDICT } from '../../modules/gatk4/createseqdict/main'
 workflow INDEX_GENOME {
 
     take:
-        ch_fasta        // channel: [mandatory] [ val(meta), path(fasta) ]
+    ch_fasta        // channel: [mandatory] [ val(meta), path(fasta) ]
 
     main:
     ch_versions         = Channel.empty()

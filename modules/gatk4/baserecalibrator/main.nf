@@ -7,8 +7,10 @@ process GATK4_BASERECALIBRATOR {
     path  fasta
     path  fai
     path  dict
-    path  known_sites
-    path  known_sites_tbi
+    path  snp_known_sites
+    path  indel_known_sites
+    path  snp_known_sites_tbi
+    path  indel_known_sites_tbi
 
     output:
     tuple val(meta), path("*.table"), emit: table
@@ -36,7 +38,8 @@ process GATK4_BASERECALIBRATOR {
         --output ${prefix}.table \\
         --reference $fasta \\
         $interval_command \\
-        $sites_command \\
+        --known-sites $snp_known_sites \\
+        --known-sites $indel_known_sites \\
         --tmp-dir . \\
         $args
 

@@ -6,6 +6,8 @@ include { BWA_MEM           } from '../../modules/bwa/mem/main'
 include { SAMBAMBA_SORT     } from '../../modules/sambamba/sort/main'
 include { SAMBAMBA_MARKDUP  } from '../../modules/sambamba/markdup/main'
 include { SAMBAMBA_FLAGSTAT } from '../../modules/sambamba/flagstat/main'
+include { SAMTOOLS_SORT     } from '../../modules/samtools/sort/main'
+include { SAMTOOLS_INDEX    } from '../../modules/samtools/index/main'
 
 workflow FASTQ_ALIGN_MARKDUP_STATS {
     take:
@@ -39,9 +41,19 @@ workflow FASTQ_ALIGN_MARKDUP_STATS {
     //
     SAMBAMBA_FLAGSTAT ( SAMBAMBA_MARKDUP.out.bam )
 
+    //
+    // Sort bam with samtools
+    //
+    SAMTOOLS_SORT ( SAMBAMBA_MARKDUP.out.bam )
+
+    //
+    // Generate sambamba flagstat
+    //
+    SAMTOOLS_INDEX ( SAMTOOLS_SORT.out.bam )
+
     emit:
-    bam      = SAMBAMBA_MARKDUP.out.bam     // channel: [ val(meta), path(bam) ]
-    bai      = SAMBAMBA_MARKDUP.out.bai     // channel: [ val(meta), path(bai) ]
+    bam      = SAMTOOLS_SORT.out.bam        // channel: [ val(meta), path(bam) ]
+    bai      = SAMTOOLS_INDEX.out.bai       // channel: [ val(meta), path(bai) ]
     flagstat = SAMBAMBA_FLAGSTAT.out.stats  // channel: [ val(meta), path(flagstat) ]
     versions = ch_versions                  // channel: [ path(versions.yml) ]
 }

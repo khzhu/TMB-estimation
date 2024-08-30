@@ -10,21 +10,29 @@ include { BAM_STATS_SAMTOOLS     } from '../../subworkflows/bam_stats_samtools/m
 workflow BAM_RECALIBRATION {
 
     take:
-    ch_bam_bai_bed      // channel: [ val(meta), path(bam), path(bai), path(bed) ]
-    ch_fasta            // channel: [ path(fasta) ]
-    ch_fai              // channel: [ path(fai) ]
-    ch_dict             // channel: [ path(dict) ]
-    ch_known_sites      // channel: [ path(known_sites) ]
-    ch_known_sites_tbi  // channel: [ path(known_sites_tbi) ]
+    ch_bam                    // channel: [ path(bam) ]
+    ch_bai                    // channel: [ path(bai) ]
+    ch_bed                    // channel: [ path(bed) ]
+    ch_fasta                  // channel: [ path(fasta) ]
+    ch_fai                    // channel: [ path(fai) ]
+    ch_dict                   // channel: [ path(dict) ]
+    ch_snp_known_sites        // channel: [ path(known_sites) ]
+    ch_snp_known_sites_tbi    // channel: [ path(known_sites_tbi) ]
+    ch_indel_known_sites      // channel: [ path(known_sites) ]
+    ch_indel_known_sites_tbi  // channel: [ path(known_sites_tbi) ]
 
     main:
 
     ch_versions = Channel.empty()
 
-    GATK4_BASERECALIBRATOR ( ch_bam_bai_bed, ch_fasta, ch_fai, ch_dict, ch_known_sites, ch_known_sites_tbi)
+    GATK4_BASERECALIBRATOR ( [ch_bam, ch_bai, ch_bed],
+                            ch_fasta, ch_fai, ch_dict,
+                            ch_snp_known_sites, ch_snp_known_sites_tbi,
+                            ch_indel_known_sites, ch_indel_known_sites_tbi)
     ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
 
-    GATK4_APPLYBQSR ( ch_bam_bai_bed.mix(GATK4_BASERECALIBRATOR.out.table), ch_fasta, ch_fai, ch_dict)
+    GATK4_APPLYBQSR ( [ch_bam, ch_bai, GATK4_BASERECALIBRATOR.out.table, ch_bed],
+                        ch_fasta, ch_fai, ch_dict)
 
     ch_bqsr = GATK4_APPLYBQSR.out.bam.mix(GATK4_APPLYBQSR.out.cram)
 

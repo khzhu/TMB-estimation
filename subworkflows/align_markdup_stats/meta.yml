@@ -10,6 +10,8 @@ components:
   - sambamba/sort
   - sambamba/markdup
   - sambamba/flagstat
+  - samtools/sort
+  - samtools/index
 input:
   - ch_reads:
       description: |
@@ -33,11 +35,11 @@ input:
 output:
   - bam:
       description: |
-        BAM file produced by bwa and de-duplicated by sambamba
+        BAM file produced by bwa, de-duplicated with sambamba, and sorted by samtools
         Structure: [ val(meta), path(bam) ]
   - bai:
       description: |
-        BAI index of the deduplicated BAM file
+        BAI index of the deduplicated and sorted BAM file
         Structure: [ val(meta), path(bai) ]
   - flagstat:
       description: |
