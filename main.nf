@@ -53,11 +53,12 @@ workflow {
                  params.val_sort_bam )
     ch_versions = ch_versions.mix( FASTQ_ALIGN_MARKDUP_STATS.out.versions )
 
-    BAM_RECALIBRATION([ FASTQ_ALIGN_MARKDUP_STATS.out.bam,
+    BAM_RECALIBRATION(  FASTQ_ALIGN_MARKDUP_STATS.out.bam,
                         FASTQ_ALIGN_MARKDUP_STATS.out.bai,
-                        file(params.exome_plus_tumor_panel_bed, checkIfExists: true)],
+                        file(params.exome_plus_tumor_panel_bed, checkIfExists: true),
                         file(params.reference_file, checkIfExists: true),
-                        INDEX_GENOME.out.fai, INDEX_GENOME.out.dict,
+                        INDEX_GENOME.out.fai,
+                        INDEX_GENOME.out.dict,
                         file(params.known_snp_vcf, checkIfExists: true),
                         file(params.known_snp_vcf_tbi, checkIfExists: true),
                         file(params.known_indel_vcf, checkIfExists: true),

@@ -25,13 +25,13 @@ workflow BAM_RECALIBRATION {
 
     ch_versions = Channel.empty()
 
-    GATK4_BASERECALIBRATOR ( [ch_bam, ch_bai, ch_bed],
+    GATK4_BASERECALIBRATOR ( [[ id:'gatk4' ], ch_bam, ch_bai, ch_bed],
                             ch_fasta, ch_fai, ch_dict,
                             ch_snp_known_sites, ch_snp_known_sites_tbi,
                             ch_indel_known_sites, ch_indel_known_sites_tbi)
     ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
 
-    GATK4_APPLYBQSR ( [ch_bam, ch_bai, GATK4_BASERECALIBRATOR.out.table, ch_bed],
+    GATK4_APPLYBQSR ( [[ id:'gatk4' ], ch_bam, ch_bai, GATK4_BASERECALIBRATOR.out.table, ch_bed],
                         ch_fasta, ch_fai, ch_dict)
 
     ch_bqsr = GATK4_APPLYBQSR.out.bam.mix(GATK4_APPLYBQSR.out.cram)

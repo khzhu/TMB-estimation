@@ -44,7 +44,7 @@ workflow FASTQ_ALIGN_MARKDUP_STATS {
     //
     // Sort bam with samtools
     //
-    SAMTOOLS_SORT ( SAMBAMBA_MARKDUP.out.bam )
+    SAMTOOLS_SORT ( SAMBAMBA_MARKDUP.out.bam , ch_fasta)
 
     //
     // Generate sambamba flagstat
