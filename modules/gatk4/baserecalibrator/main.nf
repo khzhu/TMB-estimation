@@ -8,8 +8,8 @@ process GATK4_BASERECALIBRATOR {
     path  fai
     path  dict
     path  snp_known_sites
-    path  indel_known_sites
     path  snp_known_sites_tbi
+    path  indel_known_sites
     path  indel_known_sites_tbi
 
     output:
@@ -24,8 +24,15 @@ process GATK4_BASERECALIBRATOR {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def interval_command = intervals ? "--intervals $intervals" : ""
 
+    def avail_mem = 4096
+    if (!task.memory) {
+        log.info '[GATK BaseRecalibrator] Available memory not known - defaulting to 4GB. Specify process memory requirements to change this.'
+    } else {
+        avail_mem = (task.memory.mega*0.8).intValue()
+    }
     """
-    /gatk/gatk BaseRecalibrator  \\
+    /gatk/gatk --java-options "-Xmx${avail_mem}M -XX:-UsePerfData" \\
+        BaseRecalibrator  \\
         --input $input \\
         --output ${prefix}.table \\
         --reference $fasta \\
@@ -34,6 +41,7 @@ process GATK4_BASERECALIBRATOR {
         --known-sites $indel_known_sites \\
         --tmp-dir . \\
         $args
+
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
