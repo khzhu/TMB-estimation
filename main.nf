@@ -59,9 +59,9 @@ workflow {
                         file(params.reference_file, checkIfExists: true),
                         INDEX_GENOME.out.fai,
                         INDEX_GENOME.out.dict,
-                        file(params.known_snp_vcf, checkIfExists: true),
-                        file(params.known_snp_vcf_tbi, checkIfExists: true),
-                        file(params.known_indel_vcf, checkIfExists: true),
-                        file(params.known_indel_vcf_tbi, checkIfExists: true))
+                        Channel.of(file(params.known_snp_vcf, checkIfExists: true),
+                                    file(params.known_indel_vcf, checkIfExists: true)),
+                        Channel.of(file(params.known_snp_vcf_tbi, checkIfExists: true),
+                                    file(params.known_indel_vcf_tbi, checkIfExists: true)))
     ch_versions = ch_versions.mix( BAM_RECALIBRATION.out.versions )
 }
