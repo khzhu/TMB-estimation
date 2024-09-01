@@ -27,7 +27,7 @@ process GATK4_BASERECALIBRATOR {
     def args = task.ext.args ?: ''
     def args2 = task.ext.args2 ?: ''
     def prefix = task.ext.prefix ?: "${input.baseName}"
-    def prefix2 = task.ext.prefix2 ?: "${input.baseName}.dedup.sort.recal"
+    def prefix2 = task.ext.prefix2 ?: "${input.baseName}.recal"
     def interval_command = intervals ? "--intervals $intervals" : ""
     def snp_sites_command = snp_known_sites.collect{"--known-sites $it"}.join(' ')
     def indel_sites_command = indel_known_sites.collect{"--known-sites $it"}.join(' ')
