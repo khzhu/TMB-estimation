@@ -3,10 +3,9 @@ nextflow.enable.dsl=2
 
 import groovy.json.JsonSlurper
 
-include { INDEX_GENOME              } from './subworkflows/index_genome/main'
-include { FASTQ_FASTP_FASTQC        } from './subworkflows/fastq_fastp_fastqc/main'
-include { FASTQ_ALIGN_MARKDUP_STATS } from './subworkflows/align_markdup_stats/main'
-include { BAM_RECALIBRATION         } from './subworkflows/bam_recalibration/main'
+include { INDEX_GENOME             } from './subworkflows/index_genome/main'
+include { FASTQ_FASTP_FASTQC       } from './subworkflows/fastq_fastp_fastqc/main'
+include { ALIGN_MARKDUP_BQSR_STATS } from './subworkflows/align_markdup_bqsr_stats/main'
 
 // main workflow
 workflow {
@@ -29,13 +28,6 @@ workflow {
     ch_samples = Channel.from(multi_params.collect{ it -> tuple([ id: it.specimen_num, single_end:false ],
                 [ file(it.read1, checkIfExists: true), file(it.read2, checkIfExists: true) ]) })
     ch_adapter_fasta = Channel.fromPath(params.adapter_fasta)
-    // annotations
-    ch_target_bed = Channel.fromPath(params.exome_plus_tumor_panel_bed, checkIfExists: true)
-    ch_known_indel_sites = Channel.fromPath(params.known_indel_vcf)
-    ch_known_indel_sites_tbi = Channel.fromPath(params.known_indel_vcf_tbi)
-    ch_known_snp_sites = Channel.fromPath(params.known_snp_vcf)
-    ch_known_snp_sites_tbi = Channel.fromPath(params.known_snp_vcf_tbi)
-
     ch_versions = Channel.empty()
 
     // index genome reference
@@ -46,30 +38,18 @@ workflow {
                         params.save_merged, params.skip_fastp, params.skip_fastqc )
     ch_versions = ch_versions.mix( FASTQ_FASTP_FASTQC.out.versions )
 
-    // Align to genome
-    FASTQ_ALIGN_MARKDUP_STATS ( FASTQ_FASTP_FASTQC.out.reads,
+    // Align to the reference genome
+    ALIGN_MARKDUP_BQSR_STATS ( FASTQ_FASTP_FASTQC.out.reads,
                 INDEX_GENOME.out.index,
-			    [[ id:'g1k_v37', single_end:false ], file(params.reference_file, checkIfExists: true)],
-                 params.val_sort_bam )
-    ch_versions = ch_versions.mix( FASTQ_ALIGN_MARKDUP_STATS.out.versions )
-
-    Channel.fromPath(params.output_dir + 'alignments/gatk4/*.bam')
-           .map { tuple( it.baseName, it ) }
-           .set { sample_bam_files }
-
-    Channel.fromPath(params.output_dir + 'alignments/gatk4/*.bai')
-           .map { tuple( it.baseName, it ) }
-           .set { sample_bai_files }
-
-    BAM_RECALIBRATION(  sample_bam_files,
-                        sample_bai_files,
-                        file(params.exome_plus_tumor_panel_bed, checkIfExists: true),
-                        file(params.reference_file, checkIfExists: true),
-                        file(params.fai_file, checkIfExists: true),
-                        file(params.genome_dict, checkIfExists: true),
-                        Channel.of(file(params.known_snp_vcf, checkIfExists: true),
-                                    file(params.known_indel_vcf, checkIfExists: true)),
-                        Channel.of(file(params.known_snp_vcf_tbi, checkIfExists: true),
-                                    file(params.known_indel_vcf_tbi, checkIfExists: true)))
-    ch_versions = ch_versions.mix( BAM_RECALIBRATION.out.versions )
+			    [[ id:'g1k_v37', single_end:false ],
+                file(params.reference_file, checkIfExists: true)],
+                params.val_sort_bam,
+                file(params.exome_plus_tumor_panel_bed, checkIfExists: true),
+                file(params.fai_file, checkIfExists: true),
+                file(params.genome_dict, checkIfExists: true),
+                file(params.known_snp_vcf, checkIfExists: true),
+                file(params.known_snp_vcf_tbi, checkIfExists: true),
+                file(params.known_indel_vcf, checkIfExists: true),
+                file(params.known_indel_vcf_tbi, checkIfExists: true) )
+    ch_versions = ch_versions.mix( ALIGN_MARKDUP_BQSR_STATS.out.versions )
 }

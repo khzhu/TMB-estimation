@@ -1,0 +1,100 @@
+name: align_markdup_bqsr_stats
+description: Align reads to a reference genome using bwa then deduplicate with sambamba
+keywords:
+  - align
+  - fasta
+  - genome
+  - reference
+components:
+  - bwa/mem
+  - sambamba/sort
+  - sambamba/markdup
+  - sambamba/flagstat
+  - samtools/sort
+  - samtools/index
+input:
+  - reads:
+      description: |
+        List of input FastQ files of size 1 and 2 for single-end and paired-end data,
+        respectively.
+        Structure: [ val(meta), [ path(reads) ] ]
+  - bwa_index:
+      type: path
+      description: |
+        path to bwa index files for the reference fasta file.
+        Structure: [ val(meta), path(bwa_index) ]
+  - fasta:
+      type: file
+      description: |
+        Optional reference fasta file. This only needs to be given if val_sort_bam = true.
+        Structure: [ val(meta), path(fasta) ]
+  - val_sort_bam:
+      type: boolean
+      description: If true bwa modules sort resulting bam files
+      pattern: "true|false"
+  - intervals:
+      type: file
+      description: Bed file with the genomic regions included in the library (optional)
+  - fai:
+      description: |
+        Index of the reference genome fasta file
+        Structure: [ path(fai) ]
+  - dict:
+      description: |
+        Sequence dictionary of the reference genome fasta file
+        Structure: [ path(dict) ]
+  - snp_known_sites:
+      type: file
+      description: VCF files with known sites for snps (optional)
+      pattern: "*.vcf.gz"
+  - snp_known_sites_tbi:
+      type: file
+      description: Tabix index of the known sites for snps (optional)
+      pattern: "*.vcf.gz.tbi"
+  - indel_known_sites:
+      type: file
+      description: VCF files with known sites for indels (optional)
+      pattern: "*.vcf.gz"
+  - indel_known_sites_tbi:
+      type: file
+      description: Tabix index of the known sites for indels (optional)
+      pattern: "*.vcf.gz.tbi"
+output:
+  - bam:
+      description: |
+        BAM file produced by bwa, de-duplicated with sambamba, and sorted by samtools
+        Structure: [ val(meta), path(bam) ]
+  - bai:
+      description: |
+        BAI index of the deduplicated and sorted BAM file
+        Structure: [ val(meta), path(bai) ]
+  - flagstat:
+      type: file
+      description:
+        File containing sambamba flagstat output
+        pattern: "*.{flagstat}"
+  - cram:
+      description: |
+        CRAM file of the deduplicated and sorted BAM file
+        Structure: [ val(meta), path(bai) ]
+  - crai:
+      description: |
+        CRAI index of the deduplicated and sorted BAM file
+        Structure: [ val(meta), path(crai) ]
+  - table:
+      type: file
+      description: Recalibration table from BaseRecalibrator
+      pattern: "*.{table}"
+  - stats:
+      type: file
+      description:
+        File containing samtool stats output
+        pattern: "*.{stats}"
+  - versions:
+      description: |
+        Files containing software versions
+        Structure: [ path(versions.yml) ]
+authors:
+  - "@kelseyz"
+maintainers:
+  - "@kelseyz"

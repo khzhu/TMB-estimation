@@ -45,13 +45,21 @@ input:
       type: file
       description: GATK sequence dictionary
       pattern: "*.dict"
-  - known_sites:
+  - snp_known_sites:
       type: file
-      description: VCF files with known sites for indels / snps (optional)
+      description: VCF files with known sites for snps (optional)
       pattern: "*.vcf.gz"
-  - known_sites_tbi:
+  - snp_known_sites_tbi:
       type: file
-      description: Tabix index of the known_sites (optional)
+      description: Tabix index of the known sites for snps (optional)
+      pattern: "*.vcf.gz.tbi"
+  - indel_known_sites:
+      type: file
+      description: VCF files with known sites for indels (optional)
+      pattern: "*.vcf.gz"
+  - indel_known_sites_tbi:
+      type: file
+      description: Tabix index of the known sites for indels (optional)
       pattern: "*.vcf.gz.tbi"
 output:
   - meta:

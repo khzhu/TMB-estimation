@@ -7,8 +7,10 @@ process GATK4_BASERECALIBRATOR {
     path  fasta
     path  fai
     path  dict
-    path  known_sites
-    path  known_sites_tbi
+    path  snp_known_sites
+    path  snp_known_sites_tbi
+    path  indel_known_sites
+    path  indel_known_sites_tbi
 
     output:
     tuple val(meta), path("*.bam"), emit: bam, optional: true
@@ -27,7 +29,8 @@ process GATK4_BASERECALIBRATOR {
     def prefix = task.ext.prefix ?: "${input.baseName}"
     def prefix2 = task.ext.prefix2 ?: "${input.baseName}.dedup.sort.recal"
     def interval_command = intervals ? "--intervals $intervals" : ""
-    def sites_command = known_sites.collect{"--known-sites $it"}.join(' ')
+    def snp_sites_command = snp_known_sites.collect{"--known-sites $it"}.join(' ')
+    def indel_sites_command = indel_known_sites.collect{"--known-sites $it"}.join(' ')
 
     def avail_mem = 3072
     if (!task.memory) {
@@ -42,7 +45,8 @@ process GATK4_BASERECALIBRATOR {
         --output ${prefix}.table \\
         --reference $fasta \\
         $interval_command \\
-        $sites_command \\
+        $snp_sites_command \\
+        $indel_sites_command\\
         --tmp-dir . \\
         $args
 
