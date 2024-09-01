@@ -26,8 +26,8 @@ workflow INDEX_GENOME {
     ch_versions = ch_versions.mix(GATK4_CREATESEQDICT.out.versions)
 
     emit:
-        index    = BWA_INDEX.out.index           // channel: [ val(meta), path(index) ]
-        fai      = SAMTOOLS_FAIDX.out.fai        // channel: [ val(meta), path(fai) ]
-        dict     = GATK4_CREATESEQDICT.out.dict  // channel: [ val(meta), path(dict) ]
-        versions = ch_versions                   // channel: [ path(versions.yml) ]
+    index    = BWA_INDEX.out.index           // channel: [ val(meta), path(index) ]
+    fai      = SAMTOOLS_FAIDX.out.fai        // channel: [ val(meta), path(fai) ]
+    dict     = GATK4_CREATESEQDICT.out.dict  // channel: [ val(meta), path(dict) ]
+    versions = ch_versions                   // channel: [ path(versions.yml) ]
 }
