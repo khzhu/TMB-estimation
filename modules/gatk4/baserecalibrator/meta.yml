@@ -63,10 +63,18 @@ output:
       type: file
       description: Recalibrated BAM file
       pattern: "*.{bam}"
+  - bai:
+      type: index file
+      description: Recalibrated BAI file
+      pattern: "*.{bai}"
   - cram:
       type: file
       description: Recalibrated CRAM file
       pattern: "*.{cram}"
+  - crai:
+      type: index file
+      description: Recalibrated CRAI file
+      pattern: "*.{crai}"
   - table:
       type: file
       description: Recalibration table from BaseRecalibrator

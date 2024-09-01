@@ -24,12 +24,12 @@ workflow BAM_RECALIBRATION {
 
     ch_versions = Channel.empty()
 
-    GATK4_BASERECALIBRATOR ( [[id: "${ch_bam.baseName}" ], ch_bam, ch_bai, ch_bed],
+    GATK4_BASERECALIBRATOR ( [[id: "bqsr" ], ch_bam, ch_bai, ch_bed],
                             ch_fasta, ch_fai, ch_dict,
                             ch_known_sites, ch_known_sites_tbi)
     ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
 
-    SAMTOOLS_CONVERT ( Channel.of([ [id: "${ch_bam.baseName}", single_end: false],
+    SAMTOOLS_CONVERT ( Channel.of([ [id: "bqsr", single_end: false],
                         GATK4_BASERECALIBRATOR.out.bam, GATK4_BASERECALIBRATOR.out.bai]),
                         Channel.of([ [ id:'genome' ], ch_fasta]),
                         Channel.of([ [ id:'fai' ], ch_fai ]))
