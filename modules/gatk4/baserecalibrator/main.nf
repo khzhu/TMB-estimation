@@ -11,6 +11,8 @@ process GATK4_BASERECALIBRATOR {
     path  known_sites_tbi
 
     output:
+    tuple val(meta), path("*.bam") , emit: bam,  optional: true
+    tuple val(meta), path("*.cram"), emit: cram, optional: true
     tuple val(meta), path("*.table"), emit: table
     path "versions.yml"             , emit: versions
 
@@ -19,7 +21,9 @@ process GATK4_BASERECALIBRATOR {
 
     script:
     def args = task.ext.args ?: ''
+    def args2 = task.ext.args2 ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix2 = task.ext.prefix2 ?: "${meta.id}"
     def interval_command = intervals ? "--intervals $intervals" : ""
     def sites_command = known_sites.collect{"--known-sites $it"}.join(' ')
 
@@ -39,6 +43,16 @@ process GATK4_BASERECALIBRATOR {
         $sites_command \\
         --tmp-dir . \\
         $args
+
+    gatk --java-options "-Xmx${avail_mem}M -XX:-UsePerfData" \\
+        ApplyBQSR \\
+        --input $input \\
+        --output ${prefix2}.${input.getExtension()} \\
+        --reference $fasta \\
+        --bqsr-recal-file ${prefix}.table \\
+        $interval_command \\
+        --tmp-dir . \\
+        $args2
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

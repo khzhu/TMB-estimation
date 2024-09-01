@@ -59,19 +59,29 @@ output:
       description: |
         Groovy Map containing sample information
         e.g. [ id:'test', single_end:false ]
-  - versions:
+  - bam:
       type: file
-      description: File containing software versions
-      pattern: "versions.yml"
+      description: Recalibrated BAM file
+      pattern: "*.{bam}"
+  - cram:
+      type: file
+      description: Recalibrated CRAM file
+      pattern: "*.{cram}"
   - table:
       type: file
       description: Recalibration table from BaseRecalibrator
       pattern: "*.{table}"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
 authors:
+  - "@kelseyz"
   - "@yocra3"
   - "@FriederikeHanssen"
   - "@maxulysse"
 maintainers:
+  - "@kelseyz"
   - "@yocra3"
   - "@FriederikeHanssen"
   - "@maxulysse"

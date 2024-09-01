@@ -17,22 +17,19 @@ workflow BAM_RECALIBRATION {
     ch_fai                    // channel: [ path(fai) ]
     ch_dict                   // channel: [ path(dict) ]
     ch_known_sites            // channel: [ path(known_sites) ]
-    ch_nown_sites_tbi         // channel: [ path(known_sites_tbi) ]
+    ch_known_sites_tbi        // channel: [ path(known_sites_tbi) ]
 
     main:
 
     ch_versions = Channel.empty()
 
     ch_bed                    // channel: [ path(bed) ]
-    GATK4_BASERECALIBRATOR ( [[ id:'gatk4' ], ch_bam, ch_bai, ch_bed],
+    GATK4_BASERECALIBRATOR ( [[id: "gatk4_bqsr"], ch_bam, ch_bai, ch_bed],
                             ch_fasta, ch_fai, ch_dict,
                             ch_known_sites, ch_known_sites_tbi)
     ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
 
-    GATK4_APPLYBQSR ( [[ id:'gatk4' ], ch_bam, ch_bai, GATK4_BASERECALIBRATOR.out.table, ch_bed],
-                        ch_fasta, ch_fai, ch_dict)
-
-    ch_bqsr = GATK4_APPLYBQSR.out.bam.mix(GATK4_APPLYBQSR.out.cram)
+    ch_bqsr = GATK4_BASERECALIBRATOR.out.bam.mix(GATK4_BASERECALIBRATOR.out.cram)
 
     SAMTOOLS_INDEX ( ch_bqsr )
     ch_versions = ch_versions.mix(SAMTOOLS_INDEX.out.versions.first())
@@ -49,8 +46,8 @@ workflow BAM_RECALIBRATION {
     ch_versions = ch_versions.mix(BAM_STATS_SAMTOOLS.out.versions)
 
     emit:
-    bam      = GATK4_APPLYBQSR.out.bam           // channel: [ val(meta), path(bam) ]
-    cram     = GATK4_APPLYBQSR.out.cram          // channel: [ val(meta), path(cram) ]
+    bam      = GATK4_BASERECALIBRATOR.out.bam    // channel: [ val(meta), path(bam) ]
+    cram     = GATK4_BASERECALIBRATOR.out.cram   // channel: [ val(meta), path(cram) ]
     table    = GATK4_BASERECALIBRATOR.out.table  // channel: [ val(meta), path(table) ]
     bai      = SAMTOOLS_INDEX.out.bai            // channel: [ val(meta), path(bai) ]
     crai     = SAMTOOLS_INDEX.out.crai           // channel: [ val(meta), path(crai) ]

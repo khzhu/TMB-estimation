@@ -13,10 +13,22 @@ components:
   - samtools/flagstat
   - bam_stats_samtools
 input:
-  - ch_bam_bai:
+  - meta:
+      type: map
       description: |
-        Sequence alignments in BAM/BAI format
-        Structure: [ val(meta), path(bam) ]
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - input:
+      type: file
+      description: BAM/CRAM file from alignment
+      pattern: "*.{bam,cram}"
+  - input_index:
+      type: file
+      description: BAI/CRAI file from alignment
+      pattern: "*.{bai,crai}"
+  - intervals:
+      type: file
+      description: Bed file with the genomic regions included in the library (optional)
   - ch_fasta:
       description: |
         Reference genome fasta file required for BQSR
