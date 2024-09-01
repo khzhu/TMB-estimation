@@ -3,9 +3,8 @@ process SAMTOOLS_CONVERT {
     label 'process_low'
 
     input:
-    tuple val(meta), path(input), path(index)
+    tuple val(meta), path(bam)
     tuple val(meta2), path(fasta)
-    tuple val(meta3), path(fai)
 
     output:
     tuple val(meta), path("*.bam")  , emit: bam ,   optional: true
@@ -19,15 +18,19 @@ process SAMTOOLS_CONVERT {
 
     script:
     def args = task.ext.args  ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${input.baseName}"
     def output_extension = input.getExtension() == "bam" ? "cram" : "bam"
 
     """
+    samtools \\
+        faidx \\
+        $fasta
+
     samtools view \\
         --threads ${task.cpus} \\
         --reference ${fasta} \\
         $args \\
-        $input \\
+        $bam \\
         -o ${prefix}.${output_extension}
 
     samtools index -@${task.cpus} ${prefix}.${output_extension}

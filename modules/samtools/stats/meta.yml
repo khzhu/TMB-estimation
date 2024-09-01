@@ -22,14 +22,10 @@ input:
       description: |
         Groovy Map containing sample information
         e.g. [ id:'test', single_end:false ]
-  - input:
+  - bam:
       type: file
       description: BAM/CRAM file from alignment
       pattern: "*.{bam,cram}"
-  - input_index:
-      type: file
-      description: BAI/CRAI file from alignment
-      pattern: "*.{bai,crai}"
   - meta2:
       type: map
       description: |
@@ -57,7 +53,9 @@ authors:
   - "@drpatelh"
   - "@FriederikeHanssen"
   - "@ramprasadn"
+  - "@kelseyz"
 maintainers:
   - "@drpatelh"
   - "@FriederikeHanssen"
   - "@ramprasadn"
+  - "@kelseyz"

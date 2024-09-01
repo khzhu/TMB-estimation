@@ -3,7 +3,7 @@ process SAMTOOLS_STATS {
     label 'process_single'
 
     input:
-    tuple val(meta), path(input), path(input_index)
+    tuple val(meta) , path(bam)
     tuple val(meta2), path(fasta)
 
     output:
@@ -15,14 +15,14 @@ process SAMTOOLS_STATS {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${input.baseName}"
     def reference = fasta ? "--reference ${fasta}" : ""
     """
     samtools \\
         stats \\
         --threads ${task.cpus} \\
         ${reference} \\
-        ${input} \\
+        ${bam} \\
         > ${prefix}.stats
 
     cat <<-END_VERSIONS > versions.yml

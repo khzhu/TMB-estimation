@@ -21,14 +21,15 @@ input:
       description: |
         Groovy Map containing sample information
         e.g. [ id:'test', single_end:false ]
-  - input:
+  - bam:
       type: file
       description: BAM/CRAM file
       pattern: "*.{bam,cram}"
-  - index:
-      type: file
-      description: BAM/CRAM index file
-      pattern: "*.{bai,crai}"
+  - meta2:
+      type: map
+      description: |
+        Groovy Map containing genome information
+        e.g. [ id:'genome' ]
   - fasta:
       type: file
       description: Reference file to create the CRAM file
@@ -62,7 +63,9 @@ output:
 authors:
   - "@FriederikeHanssen"
   - "@maxulysse"
+  - "@kelseyz"
 maintainers:
   - "@FriederikeHanssen"
   - "@maxulysse"
   - "@matthdsm"
+  - "@kelseyz"

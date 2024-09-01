@@ -3,7 +3,8 @@ process GATK4_BASERECALIBRATOR {
     label 'process_low'
 
     input:
-    tuple val(meta), path(input), path(input_index), path(intervals)
+    tuple val(meta), path(input_file)
+    path intervals
     path  fasta
     path  fai
     path  dict
@@ -41,7 +42,7 @@ process GATK4_BASERECALIBRATOR {
     """
     gatk --java-options "-Xmx${avail_mem}M -XX:-UsePerfData" \\
         BaseRecalibrator  \\
-        --input $input \\
+        --input $input_file \\
         --output ${prefix}.table \\
         --reference $fasta \\
         $interval_command \\
@@ -52,7 +53,7 @@ process GATK4_BASERECALIBRATOR {
 
     gatk --java-options "-Xmx${avail_mem}M -XX:-UsePerfData" \\
         ApplyBQSR \\
-        --input $input \\
+        --input $input_file \\
         --output ${prefix2}.${input.getExtension()} \\
         --reference $fasta \\
         --bqsr-recal-file ${prefix}.table \\
