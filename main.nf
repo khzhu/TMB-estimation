@@ -53,8 +53,16 @@ workflow {
                  params.val_sort_bam )
     ch_versions = ch_versions.mix( FASTQ_ALIGN_MARKDUP_STATS.out.versions )
 
-    BAM_RECALIBRATION(  FASTQ_ALIGN_MARKDUP_STATS.out.bam,
-                        FASTQ_ALIGN_MARKDUP_STATS.out.bai,
+    Channel.fromPath(params.output_dir + 'alignments/gatk4/*.bam')
+           .map { tuple( it.baseName, it ) }
+           .set { sample_bam_files }
+
+    Channel.fromPath(params.output_dir + 'alignments/gatk4/*.bai')
+           .map { tuple( it.baseName, it ) }
+           .set { sample_bai_files }
+
+    BAM_RECALIBRATION(  sample_bam_files,
+                        sample_bai_files,
                         file(params.exome_plus_tumor_panel_bed, checkIfExists: true),
                         file(params.reference_file, checkIfExists: true),
                         file(params.fai_file, checkIfExists: true),
