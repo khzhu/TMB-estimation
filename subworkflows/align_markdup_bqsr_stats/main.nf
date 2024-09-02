@@ -62,7 +62,7 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
     GATK4_APPLYBQSR ( SAMBAMBA_MARKDUP.out.bam,
                         GATK4_BASERECALIBRATOR.out.table,
                         intervals, fasta, fai, dict)
-    ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
+    ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions)
 
     //
     // Generate samtool stats

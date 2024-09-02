@@ -24,7 +24,7 @@ workflow {
     output_dir = params.output_dir ? params.output_dir : "."
     
     // run samples through the pipeline
-    samples = Channel.from(multi_params.collect{ it -> tuple([
+    ch_samples = Channel.from(multi_params.collect{ it -> tuple([
                 id: it.specimen_num, single_end:false],
                 [ file(it.read1, checkIfExists: true), file(it.read2, checkIfExists: true) ]) })
     adapter_fasta = Channel.fromPath(file(params.adapter_fasta, checkIfExists:true))
