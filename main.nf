@@ -41,8 +41,7 @@ workflow {
     // Align to the reference genome
     ALIGN_MARKDUP_BQSR_STATS ( FASTQ_FASTP_FASTQC.out.reads,
                 INDEX_GENOME.out.index,
-			    [[ id:'g1k_v37', single_end:false ],
-                file(params.reference_file, checkIfExists: true)],
+                file(params.reference_file, checkIfExists: true),
                 params.val_sort_bam,
                 file(params.exome_plus_tumor_panel_bed, checkIfExists: true),
                 file(params.fai_file, checkIfExists: true),

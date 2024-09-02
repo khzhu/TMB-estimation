@@ -14,7 +14,7 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
     take:
     reads                  // channel (mandatory): [ val(meta), [ path(reads) ] ]
     bwa_index              // channel (mandatory): [ val(meta2), [ path(index) ] ]
-    fasta                  // channel (optional) : [ val(meta3), path(fasta) ]
+    fasta                  // channel (optional) : [ path(fasta) ]
     val_sort_bam           // boolean (mandatory): true or false
     intervals              // channel: [ path(intervals) ]
     fai                    // channel: [ path(fai) ]
