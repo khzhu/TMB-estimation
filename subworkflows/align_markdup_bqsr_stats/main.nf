@@ -54,10 +54,12 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
     // Apply for gatk4 BQSR
     //
     GATK4_BASERECALIBRATOR ( SAMBAMBA_MARKDUP.out.bam,
-                            intervals,
-                            fasta, fai, dict,
+                            intervals, fasta, fai, dict,
                             snp_known_sites, snp_known_sites_tbi,
                             indel_known_sites, indel_known_sites_tbi)
+    GATK4_APPLYBQSR ( SAMBAMBA_MARKDUP.out.bam,
+                        GATK4_BASERECALIBRATOR.out.table,
+                        intervals, fasta, fai, dict)
     ch_versions = ch_versions.mix(GATK4_BASERECALIBRATOR.out.versions)
 
     //

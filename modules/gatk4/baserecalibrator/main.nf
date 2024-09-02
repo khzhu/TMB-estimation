@@ -3,7 +3,7 @@ process GATK4_BASERECALIBRATOR {
     label 'process_low'
 
     input:
-    tuple val(meta), path(input_file)
+    tuple val(meta), path(bam_file)
     path intervals
     path  fasta
     path  fai
@@ -14,10 +14,6 @@ process GATK4_BASERECALIBRATOR {
     path  indel_known_sites_tbi
 
     output:
-    tuple val(meta), path("*.bam"), emit: bam, optional: true
-    tuple val(meta), path("*.bai"), emit: bai, optional: true
-    tuple val(meta), path("*.cram"), emit: cram, optional: true
-    tuple val(meta), path("*.crai"), emit: crai, optional: true
     tuple val(meta), path("*.table"), emit: table
     path "versions.yml"             , emit: versions
 
@@ -26,9 +22,7 @@ process GATK4_BASERECALIBRATOR {
 
     script:
     def args = task.ext.args ?: ''
-    def args2 = task.ext.args2 ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def prefix2 = task.ext.prefix2 ?: "${meta.id}.sort.dedup.recal"
     def interval_command = intervals ? "--intervals $intervals" : ""
     def snp_sites_command = snp_known_sites.collect{"--known-sites $it"}.join(' ')
     def indel_sites_command = indel_known_sites.collect{"--known-sites $it"}.join(' ')
@@ -42,7 +36,7 @@ process GATK4_BASERECALIBRATOR {
     """
     gatk --java-options "-Xmx${avail_mem}M -XX:-UsePerfData" \\
         BaseRecalibrator  \\
-        --input $input_file \\
+        --input $bam_file \\
         --output ${prefix}.table \\
         --reference $fasta \\
         $interval_command \\
@@ -50,16 +44,6 @@ process GATK4_BASERECALIBRATOR {
         $indel_sites_command\\
         --tmp-dir . \\
         $args
-
-    gatk --java-options "-Xmx${avail_mem}M -XX:-UsePerfData" \\
-        ApplyBQSR \\
-        --input $input_file \\
-        --output ${prefix2}.${input_file.getExtension()} \\
-        --reference $fasta \\
-        --bqsr-recal-file ${prefix}.table \\
-        $interval_command \\
-        --tmp-dir . \\
-        $args2
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

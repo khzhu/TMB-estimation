@@ -1,8 +1,8 @@
-name: gatk4_baserecalibrator
-description: Generate recalibration table for Base Quality Score Recalibration (BQSR)
+name: gatk4_applybqsr
+description: Apply base quality score recalibration (BQSR) to a bam file
 keywords:
+  - bam
   - base quality score recalibration
-  - table
   - bqsr
   - gatk4
 tools:
@@ -25,6 +25,10 @@ input:
       type: file
       description: BAM file from alignment
       pattern: "*.bam"
+  - bqsr_table:
+      type: file
+      description: Recalibration table from gatk4_baserecalibrator
+      pattern: "*.table"
   - intervals:
       type: file
       description: Bed file with the genomic regions included in the library (optional)
@@ -40,43 +44,29 @@ input:
       type: file
       description: GATK sequence dictionary
       pattern: "*.dict"
-  - snp_known_sites:
-      type: file
-      description: VCF files with known sites for snps (optional)
-      pattern: "*.vcf.gz"
-  - snp_known_sites_tbi:
-      type: file
-      description: Tabix index of the known sites for snps (optional)
-      pattern: "*.vcf.gz.tbi"
-  - indel_known_sites:
-      type: file
-      description: VCF files with known sites for indels (optional)
-      pattern: "*.vcf.gz"
-  - indel_known_sites_tbi:
-      type: file
-      description: Tabix index of the known sites for indels (optional)
-      pattern: "*.vcf.gz.tbi"
 output:
   - meta:
       type: map
       description: |
         Groovy Map containing sample information
         e.g. [ id:'test', single_end:false ]
-  - table:
-      type: file
-      description: Recalibration table from BaseRecalibrator
-      pattern: "*.{table}"
   - versions:
       type: file
       description: File containing software versions
       pattern: "versions.yml"
+  - bam:
+      type: file
+      description: Recalibrated BAM file
+      pattern: "*.bam"
+  - bai:
+      type: file
+      description: Recalibrated index file
+      pattern: "*.bai"
 authors:
-  - "@kelseyz"
   - "@yocra3"
   - "@FriederikeHanssen"
-  - "@maxulysse"
+  - "@kelseyz"
 maintainers:
-  - "@kelseyz"
   - "@yocra3"
   - "@FriederikeHanssen"
-  - "@maxulysse"
+  - "@kelseyz"
