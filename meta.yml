@@ -18,6 +18,10 @@ input:
       description: |
         Groovy Map containing sample and reads information.
         e.g. [ id: 'sample1'], [read1, read2] ]
+  - adapter_fasta:
+      type: file
+      description: File in FASTA format containing possible adapters to remove.
+      pattern: "*.{fasta,fna,fas,fa}"
 output:
   - meta:
       type: map

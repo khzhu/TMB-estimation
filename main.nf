@@ -24,23 +24,24 @@ workflow {
     output_dir = params.output_dir ? params.output_dir : "."
     
     // run samples through the pipeline
-    ch_samples = Channel.from(multi_params.collect{ it -> tuple([
-                id: it.specimen_num, single_end:false, tissue: it.tissue ],
+    samples = Channel.from(multi_params.collect{ it -> tuple([
+                id: it.specimen_num, single_end:false],
                 [ file(it.read1, checkIfExists: true), file(it.read2, checkIfExists: true) ]) })
-
+    adapter_fasta = Channel.fromPath(file(params.adapter_fasta, checkIfExists:true))
     // map reads to genome
-    MAP_TO_GENOME( ch_samples )
+    MAP_TO_GENOME( ch_samples, adapter_fasta )
 }
 
 workflow MAP_TO_GENOME {
     take:
         samples
+        adapter_fasta
     main:
     ch_versions = Channel.empty()
 
     // Trim raw seqeunce reads with paired-end data
     FASTQ_FASTP_FASTQC ( samples,
-                        file(params.adapter_fasta, checkIfExists:true),
+                        adapter_fasta,
                         params.save_trimmed_fail,
                         params.save_merged,
                         params.skip_fastp,

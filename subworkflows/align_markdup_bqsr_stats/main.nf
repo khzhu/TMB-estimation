@@ -7,8 +7,10 @@ include { SAMTOOLS_SORT          } from '../../modules/samtools/sort/main'
 include { SAMBAMBA_MARKDUP       } from '../../modules/sambamba/markdup/main'
 include { SAMBAMBA_FLAGSTAT      } from '../../modules/sambamba/flagstat/main'
 include { GATK4_BASERECALIBRATOR } from '../../modules/gatk4/baserecalibrator/main'
-include { SAMTOOLS_CONVERT       } from '../../modules/samtools/convert/main'
+include { GATK4_APPLYBQSR        } from '../../modules/gatk4/applybqsr/main'
 include { SAMTOOLS_STATS         } from '../../modules/samtools/stats/main'
+include { SAMTOOLS_CONVERT       } from '../../modules/samtools/convert/main'
+
 
 workflow ALIGN_MARKDUP_BQSR_STATS {
     take:
@@ -65,16 +67,16 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
     //
     // Generate samtool stats
     //
-    SAMTOOLS_STATS ( GATK4_BASERECALIBRATOR.out.bam, fasta)
+    SAMTOOLS_STATS ( GATK4_APPLYBQSR.out.bam, fasta)
 
     //
     // Convert to CRAM
     //
-    SAMTOOLS_CONVERT ( GATK4_BASERECALIBRATOR.out.bam, fasta)
+    SAMTOOLS_CONVERT ( GATK4_APPLYBQSR.out.bam, fasta)
 
     emit:
-    bam      = GATK4_BASERECALIBRATOR.out.bam // channel: [ val(meta), path(bam) ]
-    bai      = GATK4_BASERECALIBRATOR.out.bai // channel: [ val(meta), path(bai) ]
+    bam      = GATK4_APPLYBQSR.out.bam        // channel: [ val(meta), path(bam) ]
+    bai      = GATK4_APPLYBQSR.out.bai        // channel: [ val(meta), path(bai) ]
     cram     = SAMTOOLS_CONVERT.out.bam       // channel: [ val(meta), path(cram) ]
     crai     = SAMTOOLS_CONVERT.out.crai      // channel: [ val(meta), path(crai) ]
     flagstat = SAMBAMBA_FLAGSTAT.out.stats    // channel: [ val(meta), path(flagstat) ]
