@@ -17,10 +17,11 @@ input:
       type: map
       description: |
         Groovy Map containing reference information.
-        e.g. [ id:'test', single_end:false ]
+        e.g. [ id:'genome']
   - fasta:
       type: file
       description: Input genome fasta file
+      pattern: "*.{fa,fasta}"
 output:
   - meta:
       type: map

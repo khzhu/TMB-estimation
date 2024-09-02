@@ -3,7 +3,6 @@ nextflow.enable.dsl=2
 
 import groovy.json.JsonSlurper
 
-include { INDEX_GENOME             } from './subworkflows/index_genome/main'
 include { FASTQ_FASTP_FASTQC       } from './subworkflows/fastq_fastp_fastqc/main'
 include { ALIGN_MARKDUP_BQSR_STATS } from './subworkflows/align_markdup_bqsr_stats/main'
 
@@ -11,7 +10,7 @@ include { ALIGN_MARKDUP_BQSR_STATS } from './subworkflows/align_markdup_bqsr_sta
 workflow {
     log.info """\
     TMB estimation pipeline ${params.release}
-    ========================================
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     samples file  : ${params.input_json}
     output dir    : ${params.output_dir}
     """
@@ -25,22 +24,32 @@ workflow {
     output_dir = params.output_dir ? params.output_dir : "."
     
     // run samples through the pipeline
-    ch_samples = Channel.from(multi_params.collect{ it -> tuple([ id: it.specimen_num, single_end:false ],
+    ch_samples = Channel.from(multi_params.collect{ it -> tuple([
+                id: it.specimen_num, single_end:false, tissue: it.tissue ],
                 [ file(it.read1, checkIfExists: true), file(it.read2, checkIfExists: true) ]) })
-    ch_adapter_fasta = Channel.fromPath(params.adapter_fasta)
+
+    // map reads to genome
+    MAP_TO_GENOME( ch_samples )
+}
+
+workflow MAP_TO_GENOME {
+    take:
+        samples
+    main:
     ch_versions = Channel.empty()
 
-    // index genome reference
-    INDEX_GENOME ( [[ id:'g1k_v37', single_end:false ], file(params.reference_file, checkIfExists: true)])
-
     // Trim raw seqeunce reads with paired-end data
-    FASTQ_FASTP_FASTQC ( ch_samples, ch_adapter_fasta, params.save_trimmed_fail,
-                        params.save_merged, params.skip_fastp, params.skip_fastqc )
+    FASTQ_FASTP_FASTQC ( samples,
+                        file(params.adapter_fasta, checkIfExists:true),
+                        params.save_trimmed_fail,
+                        params.save_merged,
+                        params.skip_fastp,
+                        params.skip_fastqc )
     ch_versions = ch_versions.mix( FASTQ_FASTP_FASTQC.out.versions )
 
     // Align to the reference genome
     ALIGN_MARKDUP_BQSR_STATS ( FASTQ_FASTP_FASTQC.out.reads,
-                INDEX_GENOME.out.index,
+                path(params.bwa_index, checkIfExists: true),
                 file(params.reference_file, checkIfExists: true),
                 params.val_sort_bam,
                 file(params.exome_plus_tumor_panel_bed, checkIfExists: true),
