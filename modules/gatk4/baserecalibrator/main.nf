@@ -27,8 +27,8 @@ process GATK4_BASERECALIBRATOR {
     script:
     def args = task.ext.args ?: ''
     def args2 = task.ext.args2 ?: ''
-    def prefix = task.ext.prefix ?: "${input.baseName}"
-    def prefix2 = task.ext.prefix2 ?: "${input.baseName}.recal"
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix2 = task.ext.prefix2 ?: "${meta.id}.sort.dedup.recal"
     def interval_command = intervals ? "--intervals $intervals" : ""
     def snp_sites_command = snp_known_sites.collect{"--known-sites $it"}.join(' ')
     def indel_sites_command = indel_known_sites.collect{"--known-sites $it"}.join(' ')
@@ -54,7 +54,7 @@ process GATK4_BASERECALIBRATOR {
     gatk --java-options "-Xmx${avail_mem}M -XX:-UsePerfData" \\
         ApplyBQSR \\
         --input $input_file \\
-        --output ${prefix2}.${input.getExtension()} \\
+        --output ${prefix2}.${input_file.getExtension()} \\
         --reference $fasta \\
         --bqsr-recal-file ${prefix}.table \\
         $interval_command \\

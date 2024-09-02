@@ -15,7 +15,7 @@ process SAMTOOLS_STATS {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${input.baseName}"
+    def prefix = task.ext.prefix ?: "${meta.id}"
     def reference = fasta ? "--reference ${fasta}" : ""
     """
     samtools \\
