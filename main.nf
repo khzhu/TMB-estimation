@@ -3,6 +3,7 @@ nextflow.enable.dsl=2
 
 import groovy.json.JsonSlurper
 
+include { INDEX_GENOME             } from './subworkflows/index_genome/main'
 include { FASTQ_FASTP_FASTQC       } from './subworkflows/fastq_fastp_fastqc/main'
 include { ALIGN_MARKDUP_BQSR_STATS } from './subworkflows/align_markdup_bqsr_stats/main'
 
@@ -24,24 +25,17 @@ workflow {
     output_dir = params.output_dir ? params.output_dir : "."
     
     // run samples through the pipeline
-    ch_samples = Channel.from(multi_params.collect{ it -> tuple([
-                id: it.specimen_num, single_end:false],
+    samples = Channel.from(multi_params.collect{ it -> tuple([
+                id: it.specimen_num, single_end:false, tissue: it.tissue ],
                 [ file(it.read1, checkIfExists: true), file(it.read2, checkIfExists: true) ]) })
-    adapter_fasta = Channel.fromPath(file(params.adapter_fasta, checkIfExists:true))
-    // map reads to genome
-    MAP_TO_GENOME( ch_samples, adapter_fasta )
-}
-
-workflow MAP_TO_GENOME {
-    take:
-        samples
-        adapter_fasta
-    main:
     ch_versions = Channel.empty()
+
+    // index genome
+    INDEX_GENOME ( [[ id:'g1k_v37'], file(params.reference_file, checkIfExists: true)])
 
     // Trim raw seqeunce reads with paired-end data
     FASTQ_FASTP_FASTQC ( samples,
-                        adapter_fasta,
+                        file(params.adapter_fasta, checkIfExists:true),
                         params.save_trimmed_fail,
                         params.save_merged,
                         params.skip_fastp,
@@ -50,12 +44,12 @@ workflow MAP_TO_GENOME {
 
     // Align to the reference genome
     ALIGN_MARKDUP_BQSR_STATS ( FASTQ_FASTP_FASTQC.out.reads,
-                path(params.bwa_index, checkIfExists: true),
+                INDEX_GENOME.out.index,
                 file(params.reference_file, checkIfExists: true),
                 params.val_sort_bam,
                 file(params.exome_plus_tumor_panel_bed, checkIfExists: true),
-                file(params.fai_file, checkIfExists: true),
-                file(params.genome_dict, checkIfExists: true),
+                INDEX_GENOME.out.fai,
+                INDEX_GENOME.out.dict,
                 file(params.known_snp_vcf, checkIfExists: true),
                 file(params.known_snp_vcf_tbi, checkIfExists: true),
                 file(params.known_indel_vcf, checkIfExists: true),
