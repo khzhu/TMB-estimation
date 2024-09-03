@@ -16,7 +16,7 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
     take:
     reads                  // channel (mandatory): [ val(meta), [ path(reads) ] ]
     bwa_index              // channel (mandatory): [ val(meta2), [ path(index) ] ]
-    fasta                  // channel (optional) : [ path(fasta) ]
+    fasta                  // channel (optional) : [ val(meta3), [ path(fasta) ] ]
     val_sort_bam           // boolean (mandatory): true or false
     intervals              // channel: [ path(intervals) ]
     fai                    // channel: [ path(fai) ]
@@ -32,7 +32,7 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
     //
     // Map reads with BWA
     //
-    BWA_MEM ( reads, bwa_index, fasta, val_sort_bam )
+    BWA_MEM ( reads, bwa_index, [[id:'genome'],fasta], val_sort_bam )
     ch_versions = ch_versions.mix(BWA_MEM.out.versions)
 
     //
