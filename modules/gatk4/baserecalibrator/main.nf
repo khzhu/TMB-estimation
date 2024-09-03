@@ -5,9 +5,9 @@ process GATK4_BASERECALIBRATOR {
     input:
     tuple val(meta), path(bam_file)
     path intervals
-    path  fasta
-    path  fai
-    path  dict
+    tuple val(meta2), path(fasta)
+    tuple val(meta2), path(fai)
+    tuple val(meta2), path(dict)
     path  snp_known_sites
     path  snp_known_sites_tbi
     path  indel_known_sites

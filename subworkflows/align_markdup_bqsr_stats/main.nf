@@ -16,7 +16,7 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
     take:
     reads                  // channel (mandatory): [ val(meta), [ path(reads) ] ]
     bwa_index              // channel (mandatory): [ val(meta2), [ path(index) ] ]
-    fasta                  // channel (optional) : [ val(meta3), [ path(fasta) ] ]
+    fasta                  // channel (optional) : [ val(meta2), [ path(fasta) ] ]
     val_sort_bam           // boolean (mandatory): true or false
     intervals              // channel: [ path(intervals) ]
     fai                    // channel: [ val(meta2), path(fai) ]
@@ -56,12 +56,12 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
     // Apply for gatk4 BQSR
     //
     GATK4_BASERECALIBRATOR ( SAMBAMBA_MARKDUP.out.bam,
-                            intervals, fasta, fai, dict,
+                            intervals, [[id:'genome'],fasta], fai, dict,
                             snp_known_sites, snp_known_sites_tbi,
                             indel_known_sites, indel_known_sites_tbi)
     GATK4_APPLYBQSR ( SAMBAMBA_MARKDUP.out.bam,
                         GATK4_BASERECALIBRATOR.out.table,
-                        intervals, fasta, fai, dict)
+                        intervals, [[id:'genome'],fasta], fai, dict)
     ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions)
 
     //

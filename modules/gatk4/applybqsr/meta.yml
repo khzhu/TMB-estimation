@@ -35,15 +35,15 @@ input:
   - fasta:
       type: file
       description: The reference fasta file
-      pattern: "*.fasta"
+      Structure: [ val(meta2), path(*.fasta) ]
   - fai:
       type: file
       description: Index of reference fasta file
-      pattern: "*.fasta.fai"
+      Structure: [ val(meta2), path(*.fai) ]
   - dict:
       type: file
       description: GATK sequence dictionary
-      pattern: "*.dict"
+      Structure: [ val(meta2), path(*.dict) ]
 output:
   - meta:
       type: map

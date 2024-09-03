@@ -4,11 +4,11 @@ process GATK4_APPLYBQSR {
 
     input:
     tuple val(meta), path(bam_file)
-    tuple val(meta), bqsr_table
+    tuple val(meta), path(bqsr_table)
     path  intervals
-    path  fasta
-    path  fai
-    path  dict
+    tuple val(meta2), path(fasta)
+    tuple val(meta2), path(fai)
+    tuple val(meta2), path(dict)
 
     output:
     tuple val(meta), path("*.bam") , emit: bam
