@@ -38,7 +38,7 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
     //
     // Sort bam with samtools
     //
-    SAMTOOLS_SORT ( BWA_MEM.out.bam , fasta)
+    SAMTOOLS_SORT ( BWA_MEM.out.bam , [[id:'genome'],fasta] )
     ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions)
 
     //

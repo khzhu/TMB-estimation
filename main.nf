@@ -30,10 +30,10 @@ workflow {
                 [ file(it.read1, checkIfExists: true), file(it.read2, checkIfExists: true) ]) })
     ch_versions = Channel.empty()
 
-    // index genome
+    // Index genome reference
     INDEX_GENOME ( [[ id:'g1k_v37'], file(params.reference_file, checkIfExists: true)])
 
-    // Trim raw seqeunce reads with paired-end data
+    // Trim seqeunce reads with paired-end data
     FASTQ_FASTP_FASTQC ( samples,
                         file(params.adapter_fasta, checkIfExists:true),
                         params.save_trimmed_fail,
@@ -42,7 +42,7 @@ workflow {
                         params.skip_fastqc )
     ch_versions = ch_versions.mix( FASTQ_FASTP_FASTQC.out.versions )
 
-    // Align to the reference genome
+    // Align reads to a reference genome
     ALIGN_MARKDUP_BQSR_STATS ( FASTQ_FASTP_FASTQC.out.reads,
                 INDEX_GENOME.out.index,
                 file(params.reference_file, checkIfExists: true),
