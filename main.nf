@@ -12,7 +12,7 @@ workflow {
     log.info """\
     TMB estimation pipeline ${params.release}
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    samples file  : ${params.input_json}
+    sample sheet  : ${params.input_json}
     output dir    : ${params.output_dir}
     """
 
@@ -26,7 +26,7 @@ workflow {
     
     // run samples through the pipeline
     samples = Channel.from(multi_params.collect{ it -> tuple([
-                id: it.specimen_num, single_end:false, tissue: it.tissue ],
+                id: it.specimen_num, single_end:false, tissue: it.tissue, purity: it.purity ],
                 [ file(it.read1, checkIfExists: true), file(it.read2, checkIfExists: true) ]) })
     ch_versions = Channel.empty()
 
