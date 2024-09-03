@@ -31,7 +31,7 @@ workflow {
     ch_versions = Channel.empty()
 
     // Index genome reference
-    INDEX_GENOME ( [[ id:'g1k_v37'], file(params.reference_file, checkIfExists: true)])
+    INDEX_GENOME ( [[ id:'genome'], file(params.reference_file, checkIfExists: true)])
 
     // Trim seqeunce reads with paired-end data
     FASTQ_FASTP_FASTQC ( samples,
@@ -48,8 +48,8 @@ workflow {
                 file(params.reference_file, checkIfExists: true),
                 params.val_sort_bam,
                 file(params.exome_plus_tumor_panel_bed, checkIfExists: true),
-                INDEX_GENOME.out.fai,
-                INDEX_GENOME.out.dict,
+                file(params.fai_file, checkIfExists: true),
+                file(params.genome_dict, checkIfExists: true),
                 file(params.known_snp_vcf, checkIfExists: true),
                 file(params.known_snp_vcf_tbi, checkIfExists: true),
                 file(params.known_indel_vcf, checkIfExists: true),
