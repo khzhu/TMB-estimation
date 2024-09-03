@@ -28,7 +28,7 @@ input:
   - bqsr_table:
       type: file
       description: Recalibration table from gatk4_baserecalibrator
-      pattern: "*.table"
+      Structure: [ val(meta), path(*.table) ]
   - intervals:
       type: file
       description: Bed file with the genomic regions included in the library (optional)
@@ -63,10 +63,10 @@ output:
       description: Recalibrated index file
       pattern: "*.bai"
 authors:
+  - "@kelseyz"
   - "@yocra3"
   - "@FriederikeHanssen"
-  - "@kelseyz"
 maintainers:
+  - "@kelseyz"
   - "@yocra3"
   - "@FriederikeHanssen"
-  - "@kelseyz"

@@ -65,7 +65,7 @@ output:
   - table:
       type: file
       description: Recalibration table from BaseRecalibrator
-      pattern: "*.{table}"
+      Structure: [ val(meta), path(*.table) ]
   - versions:
       type: file
       description: File containing software versions

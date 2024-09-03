@@ -19,7 +19,7 @@ process SAMTOOLS_CONVERT {
     script:
     def args = task.ext.args  ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def output_extension = input.getExtension() == "bam" ? "cram" : "bam"
+    def output_extension = bam.getExtension() == "bam" ? "cram" : "bam"
 
     """
     samtools \\
@@ -43,7 +43,7 @@ process SAMTOOLS_CONVERT {
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def output_extension = input.getExtension() == "bam" ? "cram" : "bam"
+    def output_extension = bam.getExtension() == "bam" ? "cram" : "bam"
     def index_extension = output_extension == "bam" ? "bai" : "crai"
 
     """

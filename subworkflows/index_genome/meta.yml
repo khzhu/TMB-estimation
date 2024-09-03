@@ -34,9 +34,11 @@ output:
   - fai:
       type: file
       description: samtools index for a reference genome
+      Structure: [ val(meta), path(*.fai) ]
   - dict:
       type: file
       description: gatk sequence dictionary for a reference genome
+      Structure: [ val(meta), path(*.dict) ]
   - versions:
       type: file
       description: File containing software versions

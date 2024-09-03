@@ -2,24 +2,28 @@
     {
         "specimen_num": "CPCT1",
         "tissue": "other",
+        "purity": 100,
         "read1":"~/workspace/dsl2/data/CPCT12345678R/CPCT1/CPCT12345678R_AHHKYHDSXX_S13_L001_R1_001.fastq.gz",
         "read2":"~/workspace/dsl2/data/CPCT12345678R/CPCT1/CPCT12345678R_AHHKYHDSXX_S13_L001_R2_001.fastq.gz"
     },
     {
         "specimen_num":"CPCT2",
         "tissue": "other",
+        "purity": 100,
         "read1":"~/workspace/dsl2/data/CPCT12345678R/CPCT2/CPCT12345678R_AHHKYHDSXX_S13_L002_R1_001.fastq.gz",
         "read2":"~/workspace/dsl2/data/CPCT12345678R/CPCT2/CPCT12345678R_AHHKYHDSXX_S13_L002_R2_001.fastq.gz"
     },
     {
         "specimen_num":"CPCT3",
         "tissue": "other",
+        "purity": 100,
         "read1":"~/workspace/dsl2/data/CPCT12345678R/CPCT3/CPCT12345678R_AHHKYHDSXX_S13_L003_R1_001.fastq.gz",
         "read2":"~/workspace/dsl2/data/CPCT12345678R/CPCT3/CPCT12345678R_AHHKYHDSXX_S13_L003_R2_001.fastq.gz"
     },
     {
         "specimen_num":"CPCT4",
         "tissue": "other",
+        "purity": 100,
         "read1":"~/workspace/dsl2/data/CPCT12345678R/CPCT4/CPCT12345678R_AHHKYHDSXX_S13_L004_R1_001.fastq.gz",
         "read2":"~/workspace/dsl2/data/CPCT12345678R/CPCT4/CPCT12345678R_AHHKYHDSXX_S13_L004_R2_001.fastq.gz"
     }

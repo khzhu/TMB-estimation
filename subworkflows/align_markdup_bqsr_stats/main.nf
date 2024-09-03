@@ -19,8 +19,8 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
     fasta                  // channel (optional) : [ val(meta3), [ path(fasta) ] ]
     val_sort_bam           // boolean (mandatory): true or false
     intervals              // channel: [ path(intervals) ]
-    fai                    // channel: [ path(fai) ]
-    dict                   // channel: [ path(dict) ]
+    fai                    // channel: [ val(meta2), path(fai) ]
+    dict                   // channel: [ val(meta2), path(dict) ]
     snp_known_sites        // channel: [ path(known_sites) ]
     snp_known_sites_tbi    // channel: [ path(known_sites_tbi) ]
     indel_known_sites      // channel: [ path(known_sites) ]
@@ -67,12 +67,12 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
     //
     // Generate samtool stats
     //
-    SAMTOOLS_STATS ( GATK4_APPLYBQSR.out.bam, fasta)
+    SAMTOOLS_STATS ( GATK4_APPLYBQSR.out.bam, [[id:'genome'],fasta])
 
     //
     // Convert to CRAM
     //
-    SAMTOOLS_CONVERT ( GATK4_APPLYBQSR.out.bam, fasta)
+    SAMTOOLS_CONVERT ( GATK4_APPLYBQSR.out.bam, [[id:'genome'],fasta])
 
     emit:
     bam      = GATK4_APPLYBQSR.out.bam        // channel: [ val(meta), path(bam) ]

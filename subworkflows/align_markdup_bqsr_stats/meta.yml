@@ -22,7 +22,7 @@ input:
       type: path
       description: |
         path to bwa index files for the reference fasta file.
-        Structure: [ val(meta), path(bwa_index) ]
+        Structure: [ val(meta2), path(bwa_index) ]
   - fasta:
       type: file
       description: Reference genome FASTA file
@@ -38,11 +38,11 @@ input:
   - fai:
       description: |
         Index of the reference genome fasta file
-        Structure: [ path(fai) ]
+        Structure: [ val(meta2), path(fai) ]
   - dict:
       description: |
         Sequence dictionary of the reference genome fasta file
-        Structure: [ path(dict) ]
+        Structure: [ val(meta2), path(dict) ]
   - snp_known_sites:
       type: file
       description: VCF files with known sites for snps (optional)
@@ -84,7 +84,7 @@ output:
   - table:
       type: file
       description: Recalibration table from BaseRecalibrator
-      pattern: "*.{table}"
+      Structure: [ val(meta), path(*.table) ]
   - stats:
       type: file
       description:

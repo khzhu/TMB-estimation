@@ -4,7 +4,7 @@ process GATK4_APPLYBQSR {
 
     input:
     tuple val(meta), path(bam_file)
-    path  bqsr_table
+    tuple val(meta), bqsr_table
     path  intervals
     path  fasta
     path  fai
@@ -33,7 +33,7 @@ process GATK4_APPLYBQSR {
     gatk --java-options "-Xmx${avail_mem}M -XX:-UsePerfData" \\
         ApplyBQSR \\
         --input $bam_file \\
-        --output ${prefix}.${input.getExtension()} \\
+        --output ${prefix}.${bam_file.getExtension()} \\
         --reference $fasta \\
         --bqsr-recal-file $bqsr_table \\
         $interval_command \\
