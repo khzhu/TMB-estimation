@@ -11,7 +11,7 @@ This workflow is designed to run genomic analysis on Illumina targeted exome seq
 This pipeline starts from paired-end fastq data (.fastq.gz), and is meant to accompany the output from the [YCGA Illumina demultiplexing pipeline](https://medicine.yale.edu/genetics/research/ycga/faq/). It includes adapter trimming, QC assessment, alignment to the genome, variant calling, and TMB estimation, along with many other steps.
 
 ## Containers
-The containers directory contains instructions and recipes for building the Docker and Singularity containers used in the pipeline. Singularity containers are used on the Yale McCleary HPC cluster. The current pipeline configuration for McCleary uses .simg files stored in a shared location on the file system.
+The containers directory contains instructions and recipes for building Singularity containers used in the pipeline. Singularity containers are used on the Yale McCleary HPC cluster. The current pipeline configuration for McCleary uses .simg files stored in a shared location on the file system.
 
 ## Set up and run a workflow
 1. This repository should first be cloned from GitHub:
@@ -24,7 +24,7 @@ module load ANTLR/2.7.7-GCCcore-12.2.0-Java-11
 curl -s https://get.nextflow.io | bash
 chmod +x nextflow
 ```
-3. The input sample JSON file should have at least four columns: specimen_num, tissue (tumor source site), purity (estimated tumor cell percentages in tissue samples), and read1/2 (paired end raw reads).
+3. The input sample JSON file should have at least five columns: specimen_id, patient_id, tissue (tumor source site), purity (estimated tumor cell percentages in tissue samples), and read1/2 (paired end raw reads).
 
 4. Finally, you can use the following commands to start an interactive session in the McCleary cluster and submit a job. It is recommended that you use a temp directory outside your home directory for the large number of intermediate files produced by each process.
 ```
@@ -34,8 +34,9 @@ salloc -y ycga -c 1 -t 00-2:00 --mem=8000
 module load ANTLR/2.7.7-GCCcore-12.2.0-Java-11
 ```
 ```
-nextflow run main.nf -profile hg19 -bg \
+nextflow run main.nf -profile hg19 \
 --output_dir /vast/palmer/scratch/walther/shared/CCS/SolidTumor/v2_0_validation/RQ31352_RQ31353 \
 --input_json samples.json \
--w /vast/palmer/scratch/walther/shared/CCS/SolidTumor/v2_0_validation/RQ31352_RQ31353/tmp
+-w /vast/palmer/scratch/walther/shared/CCS/SolidTumor/v2_0_validation/RQ31352_RQ31353/tmp \
+-with-dag alignment-flowchart.png -bg
 ```

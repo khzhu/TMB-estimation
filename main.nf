@@ -26,14 +26,14 @@ workflow {
     
     // run samples through the pipeline
     samples = Channel.from(multi_params.collect{ it -> tuple([
-                id: it.specimen_num, single_end:false, tissue: it.tissue, purity: it.purity ],
+                id: it.specimen_id, pid: it.patient_id, single_end:false, tissue: it.tissue, purity: it.purity ],
                 [ file(it.read1, checkIfExists: true), file(it.read2, checkIfExists: true) ]) })
     ch_versions = Channel.empty()
 
     // Index genome reference
     INDEX_GENOME ( [[ id:'genome'], file(params.reference_file, checkIfExists: true)])
 
-    // Trim seqeunce reads with paired-end data
+    // Trim sequence reads with paired-end data
     FASTQ_FASTP_FASTQC ( samples,
                         file(params.adapter_fasta, checkIfExists:true),
                         params.save_trimmed_fail,
