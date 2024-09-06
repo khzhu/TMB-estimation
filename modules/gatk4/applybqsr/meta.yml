@@ -57,11 +57,11 @@ output:
   - bam:
       type: file
       description: Recalibrated BAM file
-      pattern: "*.bam"
+      Structure: [ val(meta), path(*.bam) ]
   - bai:
       type: file
       description: Recalibrated index file
-      pattern: "*.bai"
+      Structure: [ val(meta), path(*.bai) ]
 authors:
   - "@kelseyz"
   - "@yocra3"
