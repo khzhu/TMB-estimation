@@ -50,7 +50,7 @@ workflow SNV_MUTECT2 {
                             GATK4_CALCULATECONTAMINATION.out.contamination,
                             ch_fasta, ch_fai, ch_dict)
     
-    BCFTOOLS_NORM ( GATK4_FILTERMUTECTCALLS.out.vcf, fasta )
+    BCFTOOLS_NORM ( GATK4_FILTERMUTECTCALLS.out.vcf, ch_fasta )
     ch_versions = ch_versions.mix(BCFTOOLS_NORM.out.versions)
 
     emit:

@@ -20,7 +20,7 @@ process GATK4_GETPILEUPSUMMARIES {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.pid}"
     def interval_command = intervals ? "--intervals $intervals" : "--intervals $variants"
     def reference_command = fasta ? "--reference $fasta" : ''
 
