@@ -32,13 +32,13 @@ workflow SNV_MUTECT2 {
                     germline_resource, germline_resource_tbi)
     ch_versions = ch_versions.mix(GATK4_MUTECT2.out.versions)
 
-    GETPILEUPSUMMARIES_TUMOR  ( ch_input_bams[0],
+    GETPILEUPSUMMARIES_TUMOR  ( ch_input_bams,
                                 intervals,
                                 ch_fasta, ch_fai, ch_dict,
                                 pileup_variants,
                                 pileup_variants_tbi)
 
-    GETPILEUPSUMMARIES_NORMAL ( ch_input_bams[1],
+    GETPILEUPSUMMARIES_NORMAL ( ch_input_bams,
                                 intervals,
                                 ch_fasta, ch_fai, ch_dict,
                                 pileup_variants,

@@ -23,7 +23,7 @@ input:
         Groovy Map containing sample information
         e.g. [ id:'test' ]
   - input_bam:
-      type: file
+      type: list
       description: BAM/CRAM file to be summarised.
       pattern: "*.{bam,cram}"
   - intervals:

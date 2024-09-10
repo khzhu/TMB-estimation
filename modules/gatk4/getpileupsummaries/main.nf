@@ -33,7 +33,7 @@ process GATK4_GETPILEUPSUMMARIES {
     """
     gatk --java-options "-Xmx${avail_mem}M -XX:-UsePerfData" \\
         GetPileupSummaries \\
-        --input $input_bam \\
+        --input ${input_bam[0]} \\
         --variant $variants \\
         --output ${prefix}.pileups.table \\
         $reference_command \\
