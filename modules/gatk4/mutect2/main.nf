@@ -3,11 +3,10 @@ process GATK4_MUTECT2 {
     label 'process_medium'
 
     input:
-    tuple val(meta), path(bam_tumor)
-    tuple val(meta), path(bam_normal)
+    tuple val(meta), path(bam_tumor), path(bam_normal)
     tuple val(meta2), path(fasta)
-    tuple val(meta3), path(fai)
-    tuple val(meta4), path(dict)
+    tuple val(meta2), path(fai)
+    tuple val(meta2), path(dict)
     path(intervals)
     path(germline_resource)
     path(germline_resource_tbi)

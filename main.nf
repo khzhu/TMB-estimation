@@ -24,8 +24,8 @@ workflow {
     
     // run samples through the pipeline
     samples = Channel.from(multi_params.collect{ it -> tuple([
-                id: it.specimen_id, pid: it.patient_id, tissue: it.tissue, purity: it.purity ],
-                [ file(it.bam_tumor, checkIfExists: true), file(it.bam_normal, checkIfExists: true) ]) })
+                pid: it.patient_id, tissue: it.tissue, purity: it.purity ],
+                [ file(it.bam_tumor, checkIfExists: true), file(it.bam_normal, checkIfExists: true) ] ) })
     ch_versions = Channel.empty()
 
     // calling mutect2 somatic variants

@@ -13,8 +13,7 @@ include { BCFTOOLS_NORM                   } from '../../modules/bcftools/norm/ma
 workflow SNV_MUTECT2 {
 
     take:
-    tuple val(meta), path(bam_tumor)
-    tuple val(meta), path(bam_normal)
+    tuple val(meta), path(bam_tumor), path(bam_normal)
     tuple val(meta2), path(fasta) // channel: [mandatory] [ val(meta), path(fasta) ]
     tuple val(meta2), path(fai)
     tuple val(meta2), path(dict)
@@ -28,7 +27,7 @@ workflow SNV_MUTECT2 {
     main:
     ch_versions         = Channel.empty()
 
-    GATK4_MUTECT2 ( bam_tumor,  bam_normal, fasta, fai, dict, intervals, germline_resource, germline_resource_tbi)
+    GATK4_MUTECT2 ( [bam_tumor,  bam_normal], fasta, fai, dict, intervals, germline_resource, germline_resource_tbi)
     ch_versions = ch_versions.mix(GATK4_MUTECT2.out.versions)
 
     GATK4_GETPILEUPSUMMARIES_TUMOR  ( bam_tumor, 
