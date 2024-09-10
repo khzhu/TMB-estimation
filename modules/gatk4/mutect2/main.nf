@@ -3,7 +3,7 @@ process GATK4_MUTECT2 {
     label 'process_medium'
 
     input:
-    tuple val(meta), path(bam_tumor), path(bam_normal)
+    tuple val(meta), path(input_bams)
     tuple val(meta2), path(fasta)
     tuple val(meta2), path(fai)
     tuple val(meta2), path(dict)
@@ -26,9 +26,10 @@ process GATK4_MUTECT2 {
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.pid}.mutect2"
+    def inputs = input_bams.collect{ "--input $it"}.join(" ")
     def interval_command = intervals ? "--intervals $intervals" : ""
-    def bam_normal = bam_normal ? "--input $bam_normal": ""
-    def normal_sample = bam_normal ? "--normal-sample ${meta.pid}_N": ""
+    def tumor_sample = "--tumor-sample ${meta.pid}_T"
+    def normal_sample = panel_of_normals ? "--normal-sample ${meta.pid}_N": ""
     def pon_command = panel_of_normals ? "--panel-of-normals $panel_of_normals" : ""
     def gr_command = germline_resource ? "--germline-resource $germline_resource" : ""
 
@@ -44,9 +45,7 @@ process GATK4_MUTECT2 {
         $inputs \\
         --native-pair-hmm-threads ${task.cpus} \\
         --output ${prefix}.vcf.gz \\
-        --input ${bam_tumor} \\
-        $bam_normal \\
-        --tumor-sample ${prefix}_T \\
+        $tumor_sample \\
         $normal_sample \\
         --reference $fasta \\
         $pon_command \\
