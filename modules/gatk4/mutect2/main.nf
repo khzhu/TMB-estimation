@@ -28,7 +28,6 @@ process GATK4_MUTECT2 {
     def interval_command = intervals ? "--intervals $intervals" : ""
     def tumor_sample = "--tumor-sample ${meta.pid}_T"
     def normal_sample = "--normal-sample ${meta.pid}_N"
-    def pon_command = panel_of_normals ? "--panel-of-normals $panel_of_normals" : ""
     def gr_command = germline_resource ? "--germline-resource $germline_resource" : ""
 
     def avail_mem = 3072
@@ -46,7 +45,6 @@ process GATK4_MUTECT2 {
         $tumor_sample \\
         $normal_sample \\
         --reference $fasta \\
-        $pon_command \\
         $gr_command \\
         $interval_command \\
         --tmp-dir . \\
