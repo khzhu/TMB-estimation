@@ -12,15 +12,20 @@ components:
   - gatk4/calculatecontamination
   - gatk4/filtermutectcalls
   - bcftools/norm
-input:  
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test']
   - bam_tumor:
       type: list
       description: list of BAM files, also able to take CRAM as an input
-      pattern: [ val(meta), path(*.{bam/cram}) ]
+      pattern: "*.{bam/cram}"
   - bam_normal:
       type: list
       description: list of BAM file indexes, also able to take CRAM indexes as an input
-      pattern: [ val(meta), path(*.{bam/cram}) ]
+      pattern: "*.{bam/cram}"
   - fasta:
       type: file
       description: The reference fasta file
