@@ -22,7 +22,7 @@ workflow SNV_MUTECT2 {
     germline_resource_tbi
     pileup_variants
     pileup_variants_tbi
-    panel_of_normals, optional:true
+    panel_of_normals
 
     main:
     ch_versions         = Channel.empty()
@@ -46,8 +46,8 @@ workflow SNV_MUTECT2 {
                                 pileup_variants,
                                 pileup_variants_tbi)
 
-    GATK4_CALCULATECONTAMINATION ( GATK4_GETPILEUPSUMMARIES_TUMOR.out.table, 
-                                GATK4_GETPILEUPSUMMARIES_NORMAL.out.table)
+    GATK4_CALCULATECONTAMINATION ( GETPILEUPSUMMARIES_TUMOR.out.table,
+                                    GETPILEUPSUMMARIES_NORMAL.out.table)
     GATK4_FILTERMUTECTCALLS ( GATK4_MUTECT2.out.vcf,
                             GATK4_CALCULATECONTAMINATION.out.contamination,
                             ch_fasta, ch_fai, ch_dict)

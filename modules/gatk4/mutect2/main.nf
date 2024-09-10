@@ -10,8 +10,8 @@ process GATK4_MUTECT2 {
     path(intervals)
     path(germline_resource)
     path(germline_resource_tbi)
-    path(panel_of_normals)
-    path(panel_of_normals_tbi)
+    path(panel_of_normals), optional:true
+    path(panel_of_normals_tbi), optional:true
 
     output:
     tuple val(meta), path("*.vcf.gz")     , emit: vcf
