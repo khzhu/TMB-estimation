@@ -26,9 +26,10 @@ chmod +x nextflow
 ```
 3. The input sample JSON file should have at least five columns: specimen_id, patient_id, tissue (tumor source site), purity (estimated tumor cell percentages in tissue samples), and read1/2 (paired end raw reads).
 
-4. Finally, you can use the following commands to start an interactive session in the McCleary cluster and submit a job. It is recommended that you use a temp directory outside your home directory for the large number of intermediate files produced by each process.
+4. Finally, you can use the following commands to start an interactive session in the McCleary cluster and submit a job. It is recommended that you export the TMPDIR variable to somewhere other than the default directory on McCleary which is /tmp. Alternatively,
+you can use the -w option to set a temp directory outside your home directory for the large number of intermediate files produced by each process.
 ```
-salloc -y ycga -c 1 -t 00-2:00 --mem=8000
+salloc -p ycga -c 1 -t 00-3:00 --mem=8000
 ```
 ```
 module load ANTLR/2.7.7-GCCcore-12.2.0-Java-11
@@ -38,5 +39,5 @@ nextflow run main.nf -profile hg19 \
 --output_dir /vast/palmer/scratch/walther/shared/CCS/SolidTumor/v2_0_validation/RQ31352_RQ31353 \
 --input_json samples.json \
 -w /vast/palmer/scratch/walther/shared/CCS/SolidTumor/v2_0_validation/RQ31352_RQ31353/tmp \
--with-dag alignment-flowchart.png -bg
+-bg
 ```

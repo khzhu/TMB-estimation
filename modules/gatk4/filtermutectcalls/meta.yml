@@ -1,0 +1,71 @@
+name: gatk4_filtermutectcalls
+description: |
+  Filters the raw output of mutect2, can optionally use outputs of calculatecontamination and learnreadorientationmodel to improve filtering.
+keywords:
+  - filtermutectcalls
+  - filter
+  - gatk4
+  - mutect2
+  - vcf
+tools:
+  - gatk4:
+      description: |
+        Developed in the Data Sciences Platform at the Broad Institute, the toolkit offers a wide variety of tools
+        with a primary focus on variant discovery and genotyping. Its powerful processing engine
+        and high-performance computing features make it capable of taking on projects of any size.
+      homepage: https://gatk.broadinstitute.org/hc/en-us
+      documentation: https://gatk.broadinstitute.org/hc/en-us/categories/360002369672s
+      doi: 10.1158/1538-7445.AM2017-3590
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test' ]
+  - vcf:
+      type: file
+      description: compressed vcf file of mutect2calls
+      pattern: "*.vcf.gz"
+  - table:
+      type: file
+      description: table(s) containing contamination data for input vcf. Optional input, takes priority over estimate.
+      Structure: [ val(meta), path("*.contamination.table") ]
+  - fasta:
+      type: file
+      description: The reference fasta file
+      Structure: [ val(meta), path("*.fasta") ]
+  - fai:
+      type: file
+      description: Index of reference fasta file
+      Structure: [ val(meta), path("*.fasta.fai") ]
+  - dict:
+      type: file
+      description: GATK sequence dictionary
+      Structure: [ val(meta), path("*.dict") ]
+output:
+  - vcf:
+      type: file
+      description: file containing filtered mutect2 calls.
+      pattern: "*.vcf.gz"
+  - tbi:
+      type: file
+      description: tbi file that pairs with vcf.
+      pattern: "*.vcf.gz.tbi"
+  - stats:
+      type: file
+      description: file containing statistics of the filtermutectcalls run.
+      pattern: "*.filteringStats.tsv"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@GCJMackenzie"
+  - "@maxulysse"
+  - "@ramprasadn"
+  - "@kelseyz"
+maintainers:
+  - "@GCJMackenzie"
+  - "@maxulysse"
+  - "@ramprasadn"
+  - "@kelseyz"
