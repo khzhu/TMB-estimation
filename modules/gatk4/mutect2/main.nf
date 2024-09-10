@@ -10,8 +10,6 @@ process GATK4_MUTECT2 {
     path(intervals)
     path(germline_resource)
     path(germline_resource_tbi)
-    path(panel_of_normals)
-    path(panel_of_normals_tbi)
 
     output:
     tuple val(meta), path("*.vcf.gz")     , emit: vcf
@@ -29,7 +27,7 @@ process GATK4_MUTECT2 {
     def inputs = input_bams.collect{ "--input $it"}.join(" ")
     def interval_command = intervals ? "--intervals $intervals" : ""
     def tumor_sample = "--tumor-sample ${meta.pid}_T"
-    def normal_sample = panel_of_normals ? "--normal-sample ${meta.pid}_N": ""
+    def normal_sample = "--normal-sample ${meta.pid}_N"
     def pon_command = panel_of_normals ? "--panel-of-normals $panel_of_normals" : ""
     def gr_command = germline_resource ? "--germline-resource $germline_resource" : ""
 

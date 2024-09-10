@@ -37,6 +37,6 @@ workflow {
                 file(params.gnomad_exome_vcf, checkIfExists: true),
                 file(params.gnomad_exome_vcf_tbi, checkIfExists: true),
                 file(params.exac_common_vcf, checkIfExists: true),
-                file(params.exac_common_vcf_tbi, checkIfExists: true), null, null)
+                file(params.exac_common_vcf_tbi, checkIfExists: true))
     ch_versions = ch_versions.mix( SNV_MUTECT2.out.versions )
 }

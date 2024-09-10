@@ -58,14 +58,6 @@ input:
       type: file
       description: Index file for the pileup variants.
       pattern: "*.vcf.gz.tbi"
-  - panel_of_normals:
-      type: file
-      description: vcf file to be used as a panel of normals.
-      pattern: "*.vcf.gz"
-  - panel_of_normals_tbi:
-      type: file
-      description: Index for the panel of normals.
-      pattern: "*.vcf.gz.tbi"
 output:
   - vcf:
       type: file
