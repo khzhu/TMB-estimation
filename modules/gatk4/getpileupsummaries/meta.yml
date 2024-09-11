@@ -50,6 +50,10 @@ input:
       type: file
       description: Index file for the germline resource.
       pattern: "*.vcf.gz.tbi"
+  - control_bam:
+      type: boolean
+      description: bam from normal sample (true) or tumor sample (false)
+      pattern: "true or false"
 output:
   - pileup:
       type: file

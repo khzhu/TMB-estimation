@@ -10,6 +10,7 @@ process GATK4_GETPILEUPSUMMARIES {
     tuple val(meta2), path(dict)
     path  variants
     path  variants_tbi
+    val   control_bam
 
     output:
     tuple val(meta), path('*.pileups.table'), emit: table
@@ -20,10 +21,10 @@ process GATK4_GETPILEUPSUMMARIES {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.pid}"
+    def prefix = control_bam ?: "${meta.pid}.normal" : "${meta.pid}.tumor"
     def interval_command = intervals ? "--intervals $intervals" : "--intervals $variants"
     def reference_command = fasta ? "--reference $fasta" : ''
-
+    def bam_file = control_bam? "--input ${input_bam[1]}":"--input ${input_bam[0]}"
     def avail_mem = 3072
     if (!task.memory) {
         log.info '[GATK GetPileupSummaries] Available memory not known - defaulting to 3GB. Specify process memory requirements to change this.'
@@ -33,7 +34,7 @@ process GATK4_GETPILEUPSUMMARIES {
     """
     gatk --java-options "-Xmx${avail_mem}M -XX:-UsePerfData" \\
         GetPileupSummaries \\
-        --input ${input_bam[0]} \\
+        $bam_file \\
         --variant $variants \\
         --output ${prefix}.pileups.table \\
         $reference_command \\

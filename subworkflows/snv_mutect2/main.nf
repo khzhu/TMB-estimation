@@ -36,13 +36,15 @@ workflow SNV_MUTECT2 {
                                 intervals,
                                 ch_fasta, ch_fai, ch_dict,
                                 pileup_variants,
-                                pileup_variants_tbi)
+                                pileup_variants_tbi,
+                                false)
 
     GETPILEUPSUMMARIES_NORMAL ( ch_input_bams,
                                 intervals,
                                 ch_fasta, ch_fai, ch_dict,
                                 pileup_variants,
-                                pileup_variants_tbi)
+                                pileup_variants_tbi,
+                                true)
 
     GATK4_CALCULATECONTAMINATION ( GETPILEUPSUMMARIES_TUMOR.out.table,
                                     GETPILEUPSUMMARIES_NORMAL.out.table)
