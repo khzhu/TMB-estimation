@@ -21,7 +21,7 @@ process GATK4_GETPILEUPSUMMARIES {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = control_bam ?: "${meta.pid}.normal" : "${meta.pid}.tumor"
+    def prefix = control_bam ? "${meta.id}.normal" : "${meta.id}.tumor"
     def interval_command = intervals ? "--intervals $intervals" : "--intervals $variants"
     def reference_command = fasta ? "--reference $fasta" : ''
     def bam_file = control_bam? "--input ${input_bam[1]}":"--input ${input_bam[0]}"

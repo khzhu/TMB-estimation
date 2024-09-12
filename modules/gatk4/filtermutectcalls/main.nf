@@ -20,7 +20,7 @@ process GATK4_FILTERMUTECTCALLS {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.pid}.mutect2.filtered"
+    def prefix = task.ext.prefix ?: "${meta.id}.mutect2.filtered"
     def table_command = table ? table.collect{"--contamination-table $it"}.join(' ') : ''
 
     def avail_mem = 3072
