@@ -17,7 +17,7 @@ process BCFTOOLS_NORM {
 
     script:
     def args = task.ext.args ?: '--output-type z'
-    def prefix = task.ext.prefix ?: "${meta.pid}.mutect2.pass.norm.somatic"
+    def prefix = task.ext.prefix ?: "${meta.id}.mutect2.pass.norm.somatic"
     def extension = args.contains("--output-type b") || args.contains("-Ob") ? "bcf.gz" :
                     args.contains("--output-type u") || args.contains("-Ou") ? "bcf" :
                     args.contains("--output-type z") || args.contains("-Oz") ? "vcf.gz" :
