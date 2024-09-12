@@ -39,6 +39,7 @@ process GATK4_MUTECT2 {
     """
     gatk --java-options "-Xmx${avail_mem}M -XX:-UsePerfData" \\
         Mutect2 \\
+        $args \\
         $inputs \\
         --native-pair-hmm-threads ${task.cpus} \\
         --output ${prefix}.vcf.gz \\
@@ -46,9 +47,9 @@ process GATK4_MUTECT2 {
         $normal_sample \\
         --reference $fasta \\
         $gr_command \\
+        --f1r2-tar-gz ${prefix}.f1r2.tar.gz \\
         $interval_command \\
-        --tmp-dir . \\
-        $args
+        --tmp-dir .
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

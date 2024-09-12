@@ -33,7 +33,7 @@ workflow {
                 [[ id:'genome'], file(params.reference_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.fai_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.dict_file, checkIfExists: true)],
-                file(params.exome_plus_tumor_panel_bed, checkIfExists: true),
+                file(params.tumor_panel_bed, checkIfExists: true),
                 file(params.gnomad_exome_vcf, checkIfExists: true),
                 file(params.gnomad_exome_vcf_tbi, checkIfExists: true),
                 file(params.exac_common_vcf, checkIfExists: true),
