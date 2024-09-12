@@ -26,6 +26,11 @@ input:
       type: file
       description: compressed vcf file of mutect2calls
       pattern: "*.vcf.gz"
+  - tbi:
+      type: file
+      description: |
+        An optional index of the VCF file (for when the VCF is compressed)
+      pattern: "*.vcf.gz.tbi"
   - table:
       type: file
       description: table(s) containing contamination data for input vcf. Optional input, takes priority over estimate.

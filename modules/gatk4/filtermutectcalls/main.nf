@@ -3,7 +3,7 @@ process GATK4_FILTERMUTECTCALLS {
     label 'process_low'
 
     input:
-    tuple val(meta),  path(vcf)
+    tuple val(meta),  path(vcf), path(tbi)
     tuple val(meta),  path(table)
     tuple val(meta2), path(fasta)
     tuple val(meta2), path(fai)

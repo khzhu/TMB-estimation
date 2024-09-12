@@ -3,7 +3,7 @@ process BCFTOOLS_NORM {
     label 'process_medium'
 
     input:
-    tuple val(meta), path(vcf)
+    tuple val(meta), path(vcf), path(tbi)
     tuple val(meta2), path(fasta)
 
     output:
