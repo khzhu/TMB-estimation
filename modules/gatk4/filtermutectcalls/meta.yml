@@ -31,6 +31,10 @@ input:
       description: |
         An optional index of the VCF file (for when the VCF is compressed)
       pattern: "*.vcf.gz.tbi"
+  - stats:
+      type: file
+      description: Stats file that pairs with output vcf file
+      pattern: "*vcf.gz.stats"
   - table:
       type: file
       description: table(s) containing contamination data for input vcf. Optional input, takes priority over estimate.
