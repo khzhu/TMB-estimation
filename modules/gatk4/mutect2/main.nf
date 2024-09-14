@@ -3,7 +3,7 @@ process GATK4_MUTECT2 {
     label 'process_medium'
 
     input:
-    tuple val(meta), path(input_bams)
+    tuple val(meta), path(input_bams), path(input_index_files)
     tuple val(meta2), path(fasta)
     tuple val(meta2), path(fai)
     tuple val(meta2), path(dict)

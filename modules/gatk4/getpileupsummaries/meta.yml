@@ -22,10 +22,14 @@ input:
       description: |
         Groovy Map containing sample information
         e.g. [ id:'test' ]
-  - input_bam:
+  - input_bams:
       type: list
       description: BAM/CRAM file to be summarised.
       pattern: "*.{bam,cram}"
+  - input_index_files:
+      type: list
+      description: BAI/CRAI file to be summarised.
+      pattern: "*.{bai,crai}"
   - intervals:
       type: file
       description: File containing specified sites to be used for the summary. If this option is not specified, variants file is used instead automatically.

@@ -23,8 +23,16 @@ input:
       pattern: "*.{bam/cram}"
   - bam_normal:
       type: list
-      description: list of BAM file indexes, also able to take CRAM indexes as an input
+      description: list of BAM files, also able to take CRAM indexes as an input
       pattern: "*.{bam/cram}"
+  - bai_tumor:
+      type: list
+      description: list of BAM file indexes, also able to take CRAM as an input
+      pattern: "*.{bai/crai}"
+  - bai_normal:
+      type: list
+      description: list of BAM file indexes, also able to take CRAM indexes as an input
+      pattern: "*.{bai/crai}"
   - target_bed:
       type: file
       description: BED file containing target regions for variant calling

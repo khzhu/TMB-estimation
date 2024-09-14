@@ -37,7 +37,7 @@ process MANTA_SOMATIC {
         $options_manta \\
         $args
 
-    python manta/runWorkflow.py -m local -j $task.cpus --memGb $task.memory
+    python manta/runWorkflow.py -m local -j $task.cpus
 
     mv manta/results/variants/candidateSmallIndels.vcf.gz \\
         ${prefix}.candidate_small_indels.vcf.gz

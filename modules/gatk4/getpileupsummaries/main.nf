@@ -3,7 +3,7 @@ process GATK4_GETPILEUPSUMMARIES {
     label 'process_low'
 
     input:
-    tuple val(meta), path(input_bam)
+    tuple val(meta), path(input_bams), path(input_index_files)
     path  intervals
     tuple val(meta2), path(fasta)
     tuple val(meta2), path(fai)
@@ -24,7 +24,7 @@ process GATK4_GETPILEUPSUMMARIES {
     def prefix = control_bam ? "${meta.id}.normal" : "${meta.id}.tumor"
     def interval_command = intervals ? "--intervals $intervals" : "--intervals $variants"
     def reference_command = fasta ? "--reference $fasta" : ''
-    def bam_file = control_bam? "--input ${input_bam[1]}":"--input ${input_bam[0]}"
+    def bam_file = control_bam? "--input ${input_bams[1]}":"--input ${input_bams[0]}"
     def avail_mem = 3072
     if (!task.memory) {
         log.info '[GATK GetPileupSummaries] Available memory not known - defaulting to 3GB. Specify process memory requirements to change this.'

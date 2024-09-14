@@ -13,7 +13,7 @@ include { BCFTOOLS_NORM                                         } from '../../mo
 workflow SNV_MUTECT2 {
 
     take:
-    ch_input_bams                     // channel: [mandatory] [ val(meta), path(bam_tumor), path(bam_normal) ]
+    ch_input_files                    // channel: [mandatory] [ val(meta), path(ch_input_bams), path(ch_input_bams) ]
     ch_fasta                          // channel: [mandatory] [ val(meta), path(fasta) ]
     ch_fai                            // channel: [mandatory] [ val(meta), path(fasta) ]
     ch_dict                           // channel: [mandatory] [ val(meta), path(fasta) ]
@@ -26,20 +26,20 @@ workflow SNV_MUTECT2 {
     main:
     ch_versions         = Channel.empty()
 
-    GATK4_MUTECT2 ( ch_input_bams,
+    GATK4_MUTECT2 ( ch_input_files,
                     ch_fasta, ch_fai, ch_dict,
                     intervals,
                     germline_resource, germline_resource_tbi)
     ch_versions = ch_versions.mix(GATK4_MUTECT2.out.versions)
 
-    GETPILEUPSUMMARIES_TUMOR  ( ch_input_bams,
+    GETPILEUPSUMMARIES_TUMOR  ( ch_input_files,
                                 intervals,
                                 ch_fasta, ch_fai, ch_dict,
                                 pileup_variants,
                                 pileup_variants_tbi,
                                 false)
 
-    GETPILEUPSUMMARIES_NORMAL ( ch_input_bams,
+    GETPILEUPSUMMARIES_NORMAL ( ch_input_files,
                                 intervals,
                                 ch_fasta, ch_fai, ch_dict,
                                 pileup_variants,

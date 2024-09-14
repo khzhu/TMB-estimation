@@ -11,7 +11,7 @@ include { GATK4_MERGEVCFS                      } from '../../modules/gatk4/merge
 workflow SNV_STRELKA2 {
 
     take:
-    ch_input_files   // channel: [mandatory] [ val(meta), path(ch_input_bams), path(ch_index_files) ]
+    ch_input_files  // channel: [mandatory] [ val(meta), path(ch_input_bams), path(ch_index_files) ]
     ch_fasta        // channel: [mandatory] [ val(meta2), path(fasta) ]
     ch_fai          // channel: [mandatory] [ val(meta2), path(fai) ]
     ch_dict         // channel: [mandatory] [ val(meta2), path(dict) ]
