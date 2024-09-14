@@ -1,6 +1,6 @@
-name: "index_genome"
+name: "snv_mutect2"
 description: |
-  Generate bwa/samtools index and seqeuece dictionary for a reference genome.
+  Generate filtered and normalized vcf file called by GATK4 mutect2.
   Please note, this workflow requires input CHANNELS. Input values will cause errors
 keywords:
   - fasta

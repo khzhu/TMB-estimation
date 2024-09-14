@@ -1,0 +1,79 @@
+name: "snv_strelka2"
+description: |
+  Generate Gzipped VCF file containing all SNV and INDEL variants called by Strelka2.
+  Please note, this workflow requires input CHANNELS. Input values will cause errors
+keywords:
+  - fasta
+  - manta
+  - strelka
+  - bcftools
+  - gatk4
+components:
+  - gatk4/mergevcfs
+  - bcftools/norm
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - normal_bam:
+      type: file
+      description: BAM/CRAM/SAM file
+      pattern: "*.{bam,cram,sam}"
+  - normal_bai:
+      type: file
+      description: BAM/CRAM/SAM index file
+      pattern: "*.{bai,crai,sai}"
+  - tumor_bam:
+      type: file
+      description: BAM/CRAM/SAM file
+      pattern: "*.{bam,cram,sam}"
+  - tumor_bai:
+      type: file
+      description: BAM/CRAM/SAM index file
+      pattern: "*.{bai,crai,sai}"
+  - target_bed:
+      type: file
+      description: BED file containing target regions for variant calling
+      pattern: "*.{bed}"
+  - meta2:
+      type: map
+      description: |
+        Groovy Map containing reference information
+        e.g. [ id:'genome' ]
+  - fasta:
+      type: file
+      description: Genome reference FASTA file
+      pattern: "*.{fa,fasta}"
+  - meta2:
+      type: map
+      description: |
+        Groovy Map containing reference information
+        e.g. [ id:'genome' ]
+  - fai:
+      type: file
+      description: Genome reference FASTA index file
+      pattern: "*.{fa.fai,fasta.fai}"
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - vcf:
+      type: file
+      description: Gzipped VCF file containing SNV and INDEL variants
+      pattern: "*.{vcf.gz}"
+  - vcf_tbi:
+      type: file
+      description: Index for gzipped VCF file containing all variants
+      pattern: "*.{vcf.gz.tbi}"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@kelseyz"
+maintainers:
+  - "@kelseyz"

@@ -39,4 +39,12 @@ workflow {
                 file(params.exac_common_vcf, checkIfExists: true),
                 file(params.exac_common_vcf_tbi, checkIfExists: true))
     ch_versions = ch_versions.mix( SNV_MUTECT2.out.versions )
+
+    // calling strelka2 somatic variants
+    SNV_STRELKA2 (samples,
+                [[ id:'genome'], file(params.reference_file, checkIfExists: true)],
+                [[ id:'genome'], file(params.fai_file, checkIfExists: true)],
+                [[ id:'genome'], file(params.dict_file, checkIfExists: true)],
+                file(params.tumor_panel_bed, checkIfExists: true))
+    ch_versions = ch_versions.mix( SNV_STRELKA2.out.versions )
 }
