@@ -28,6 +28,14 @@ input:
       type: list
       description: list of BAM file indexes, also able to take CRAM indexes as an input
       pattern: "*.{bam/cram}"
+  - bai_tumor:
+      type: list
+      description: list of BAM index files, also able to take CRAM as an input
+      pattern: "*.{bai/crai}"
+  - bai_normal:
+      type: list
+      description: list of BAM index file indexes, also able to take CRAM indexes as an input
+      pattern: "*.{bai/crai}"
   - candidate_small_indels:
       type: file
       description: VCF.gz file

@@ -4,7 +4,7 @@ process STRELKA_SOMATIC {
     label 'error_retry'
 
     input:
-    tuple val(meta),  path(input_bams)
+    tuple val(meta),  path(input_bams), path(input_index_files)
     tuple val(meta),  path(candidate_small_indels), path(candidate_small_indels_tbi)
     tuple val(meta2), path(fasta)
     tuple val(meta2), path(fai)

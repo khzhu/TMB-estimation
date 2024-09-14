@@ -11,7 +11,7 @@ include { GATK4_MERGEVCFS                      } from '../../modules/gatk4/merge
 workflow SNV_STRELKA2 {
 
     take:
-    ch_input_bams   // channel: [mandatory] [ val(meta), path(bam_tumor), path(bam_normal) ]
+    ch_input_files   // channel: [mandatory] [ val(meta), path(ch_input_bams), path(ch_index_files) ]
     ch_fasta        // channel: [mandatory] [ val(meta2), path(fasta) ]
     ch_fai          // channel: [mandatory] [ val(meta2), path(fai) ]
     ch_dict         // channel: [mandatory] [ val(meta2), path(dict) ]
@@ -20,12 +20,12 @@ workflow SNV_STRELKA2 {
     main:
     ch_versions         = Channel.empty()
 
-    MANTA_SOMATIC ( ch_input_bams, 
+    MANTA_SOMATIC ( ch_input_files,
                     ch_fasta, ch_fai,
                     ch_target_bed)
     ch_versions = ch_versions.mix(MANTA_SOMATIC.out.versions)
 
-    STRELKA_SOMATIC  ( ch_input_bams,
+    STRELKA_SOMATIC  ( ch_input_files,
                         MANTA_SOMATIC.out.candidate_small_indels_vcf.combine(
                         MANTA_SOMATIC.out.candidate_small_indels_vcf_tbi, by:0),
                         ch_fasta, ch_fai, ch_target_bed)
