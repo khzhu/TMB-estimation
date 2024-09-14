@@ -4,7 +4,7 @@ process STRELKA_SOMATIC {
     label 'error_retry'
 
     input:
-    tuple val(meta),  path(normal_bam), path(tumor_bam)
+    tuple val(meta),  path(input_bams)
     tuple val(meta),  path(candidate_small_indels), path(candidate_small_indels_tbi)
     tuple val(meta2), path(fasta)
     tuple val(meta2), path(fai)
@@ -29,8 +29,8 @@ process STRELKA_SOMATIC {
 
     configureStrelkaSomaticWorkflow.py \\
         $args \\
-        --tumor $tumor_bam \\
-        --normal $normal_bam \\
+        --tumor $input_bams[0] \\
+        --normal $input_bams[1] \\
         --referenceFasta $fasta \\
         ${options_target_bed} \\
         ${options_manta} \\

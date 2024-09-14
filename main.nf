@@ -4,6 +4,7 @@ nextflow.enable.dsl=2
 import groovy.json.JsonSlurper
 
 include { SNV_MUTECT2              } from './subworkflows/snv_mutect2/main'
+include { SNV_STRELKA2             } from './subworkflows/snv_strelka2/main'
 
 // main workflow
 workflow {

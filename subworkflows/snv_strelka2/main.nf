@@ -27,7 +27,7 @@ workflow SNV_STRELKA2 {
 
     STRELKA_SOMATIC  ( ch_input_bams,
                         MANTA_SOMATIC.out.candidate_small_indels_vcf.combine(
-                        MANTA_SOMATIC.out.candidate_small_indels_vcf_tbi, by:0)
+MANTA_SOMATIC.out.candidate_small_indels_vcf_tbi, by:0),
                         ch_fasta, ch_fai, target_bed)
     ch_versions = ch_versions.mix(STRELKA_SOMATIC.out.versions)
 

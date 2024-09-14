@@ -4,7 +4,7 @@ process MANTA_SOMATIC {
     label 'error_retry'
 
     input:
-    tuple val(meta), path(normal_bam), path(tumor_bam)
+    tuple val(meta), path(input_bams)
     tuple val(meta2), path(target_bed)
     tuple val(meta3), path(fasta)
     tuple val(meta3), path(fai)
@@ -30,8 +30,8 @@ process MANTA_SOMATIC {
 
     """
     configManta.py \\
-        --tumorBam $tumor_bam \\
-        --normalBam $normal_bam \\
+        --tumorBam $input_bams[0] \\
+        --normalBam $input_bams[1] \\
         --referenceFasta $fasta \\
         --runDir manta \\
         $options_manta \\
