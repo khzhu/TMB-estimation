@@ -5,9 +5,9 @@ process MANTA_SOMATIC {
 
     input:
     tuple val(meta), path(input_bams)
-    path(target_bed)
     tuple val(meta2), path(fasta)
     tuple val(meta2), path(fai)
+    tuple val(meta3), path(target_bed), path(target_bed_tbi)
 
     output:
     tuple val(meta), path("*.candidate_small_indels.vcf.gz")     , emit: candidate_small_indels_vcf

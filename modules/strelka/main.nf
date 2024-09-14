@@ -8,7 +8,7 @@ process STRELKA_SOMATIC {
     tuple val(meta),  path(candidate_small_indels), path(candidate_small_indels_tbi)
     tuple val(meta2), path(fasta)
     tuple val(meta2), path(fai)
-    path(target_bed)
+    tuple val(meta3), path(target_bed), path(target_bed_tbi)
 
     output:
     tuple val(meta), path("*.somatic_indels.vcf.gz")    , emit: vcf_indels

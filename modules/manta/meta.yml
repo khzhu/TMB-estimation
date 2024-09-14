@@ -30,10 +30,6 @@ input:
       type: list
       description: list of BAM file indexes, also able to take CRAM indexes as an input
       pattern: "*.{bam/cram}"
-  - target_bed:
-      type: file
-      description: BED file containing target regions for variant calling
-      pattern: "*.{bed}"
   - meta2:
       type: map
       description: |
@@ -52,6 +48,19 @@ input:
       type: file
       description: Genome reference FASTA index file
       pattern: "*.{fa.fai,fasta.fai}"
+  - meta3:
+      type: map
+      description: |
+        Groovy Map containing reference information
+        e.g. [ id:'genome' ]
+  - target_bed:
+      type: file
+      description: BED file containing target regions for variant calling
+      pattern: "*.{bed.gz}"
+  - target_bed_tbi:
+      type: file
+      description: BED index file containing target regions for variant calling
+      pattern: "*.{bed.gz.tbi}"
 output:
   - meta:
       type: map

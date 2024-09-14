@@ -12,23 +12,23 @@ workflow SNV_STRELKA2 {
 
     take:
     ch_input_bams   // channel: [mandatory] [ val(meta), path(bam_tumor), path(bam_normal) ]
-    ch_fasta        // channel: [mandatory] [ val(meta), path(fasta) ]
-    ch_fai          // channel: [mandatory] [ val(meta), path(fai) ]
-    ch_dict         // channel: [mandatory] [ val(meta), path(dict) ]
-    target_bed
+    ch_fasta        // channel: [mandatory] [ val(meta2), path(fasta) ]
+    ch_fai          // channel: [mandatory] [ val(meta2), path(fai) ]
+    ch_dict         // channel: [mandatory] [ val(meta2), path(dict) ]
+    ch_target_bed   // channel: [mandatory] [ val(meta3), path(bed), path(bed_tbi) ]
 
     main:
     ch_versions         = Channel.empty()
 
     MANTA_SOMATIC ( ch_input_bams, 
-                    target_bed,
-                    ch_fasta, ch_fai)
+                    ch_fasta, ch_fai,
+                    ch_target_bed)
     ch_versions = ch_versions.mix(MANTA_SOMATIC.out.versions)
 
     STRELKA_SOMATIC  ( ch_input_bams,
                         MANTA_SOMATIC.out.candidate_small_indels_vcf.combine(
-MANTA_SOMATIC.out.candidate_small_indels_vcf_tbi, by:0),
-                        ch_fasta, ch_fai, target_bed)
+                        MANTA_SOMATIC.out.candidate_small_indels_vcf_tbi, by:0),
+                        ch_fasta, ch_fai, ch_target_bed)
     ch_versions = ch_versions.mix(STRELKA_SOMATIC.out.versions)
 
     BCFTOOLS_NORM_SNV  ( STRELKA_SOMATIC.out.vcf_snvs.combine(
