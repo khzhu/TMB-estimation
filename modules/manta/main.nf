@@ -5,9 +5,9 @@ process MANTA_SOMATIC {
 
     input:
     tuple val(meta), path(input_bams)
-    tuple val(meta2), path(target_bed)
-    tuple val(meta3), path(fasta)
-    tuple val(meta3), path(fai)
+    path(target_bed)
+    tuple val(meta2), path(fasta)
+    tuple val(meta2), path(fai)
 
     output:
     tuple val(meta), path("*.candidate_small_indels.vcf.gz")     , emit: candidate_small_indels_vcf
@@ -30,8 +30,8 @@ process MANTA_SOMATIC {
 
     """
     configManta.py \\
-        --tumorBam $input_bams[0] \\
-        --normalBam $input_bams[1] \\
+        --tumorBam ${input_bams[0]} \\
+        --normalBam ${input_bams[1]} \\
         --referenceFasta $fasta \\
         --runDir manta \\
         $options_manta \\

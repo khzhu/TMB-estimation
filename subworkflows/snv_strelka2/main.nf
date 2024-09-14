@@ -40,7 +40,7 @@ MANTA_SOMATIC.out.candidate_small_indels_vcf_tbi, by:0),
                         STRELKA_SOMATIC.out.vcf_indels_tbi, by:0),
                         ch_fasta)
 
-    GATK4_MERGEVCFS ( [BCFTOOLS_NORM_SNV.out.vcf, BCFTOOLS_NORM_INDEL.out.vcf], ch_dict )
+    GATK4_MERGEVCFS ( BCFTOOLS_NORM_SNV.out.vcf.join(BCFTOOLS_NORM_INDEL.out.vcf), ch_dict )
     ch_versions = ch_versions.mix(GATK4_MERGEVCFS.out.versions)
 
     emit:
