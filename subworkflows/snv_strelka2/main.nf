@@ -40,7 +40,11 @@ workflow SNV_STRELKA2 {
                         STRELKA_SOMATIC.out.vcf_indels_tbi, by:0),
                         ch_fasta)
 
-    GATK4_MERGEVCFS ( BCFTOOLS_NORM_SNV.out.vcf.join(BCFTOOLS_NORM_INDEL.out.vcf), ch_dict )
+    ch_input_vcfs = BCFTOOLS_NORM_SNV.out.vcf \
+        | combine( BCFTOOLS_NORM_INDEL.out.vcf, by: 0 ) \
+        | map { sample, snv_vcf, indel_vcf ->
+            tuple( sample, [snv_vcf, indel_vcf] ) }
+    GATK4_MERGEVCFS ( ch_input_vcfs, ch_dict )
     ch_versions = ch_versions.mix(GATK4_MERGEVCFS.out.versions)
 
     emit:
