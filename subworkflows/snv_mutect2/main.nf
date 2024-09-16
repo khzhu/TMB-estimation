@@ -18,6 +18,7 @@ workflow SNV_MUTECT2 {
     ch_fai                            // channel: [mandatory] [ val(meta), path(fasta) ]
     ch_dict                           // channel: [mandatory] [ val(meta), path(fasta) ]
     intervals
+    bed_files
     germline_resource
     germline_resource_tbi
     pileup_variants
@@ -28,7 +29,7 @@ workflow SNV_MUTECT2 {
 
     GATK4_MUTECT2 ( ch_input_files,
                     ch_fasta, ch_fai, ch_dict,
-                    intervals,
+                    bed_files,
                     germline_resource, germline_resource_tbi)
     ch_versions = ch_versions.mix(GATK4_MUTECT2.out.versions)
 

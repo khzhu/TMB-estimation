@@ -50,6 +50,10 @@ input:
       type: file
       description: Specify region the tools is run on.
       pattern: ".{bed,interval_list}"
+  - bed_files:
+      type: list
+      description: Specify region the tools is run on.
+      pattern: "*.{bed, interval_list}"
   - germline_resource:
       type: file
       description: Population vcf of germline sequencing, containing allele fractions.

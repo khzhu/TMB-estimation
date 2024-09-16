@@ -25,7 +25,7 @@ process GATK4_MUTECT2 {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}.mutect2"
     def inputs = input_bams.collect{ "--input $it"}.join(" ")
-    def interval_command = intervals ? "--intervals $intervals" : ""
+    def interval_command = intervals ? "--intervals ${intervals}" : ""
     def tumor_sample = "--tumor-sample ${meta.id}_T"
     def normal_sample = "--normal-sample ${meta.id}_N"
     def gr_command = germline_resource ? "--germline-resource $germline_resource" : ""
@@ -42,7 +42,7 @@ process GATK4_MUTECT2 {
         $args \\
         $inputs \\
         --native-pair-hmm-threads ${task.cpus} \\
-        --output ${prefix}.vcf.gz \\
+        --output ${prefix}.${intervals.baseName}.vcf.gz \\
         $tumor_sample \\
         $normal_sample \\
         --reference $fasta \\

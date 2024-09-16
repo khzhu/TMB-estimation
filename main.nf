@@ -31,11 +31,12 @@ workflow {
     ch_versions = Channel.empty()
 
     // calling mutect2 somatic variants
-    SNV_MUTECT2 (samples,
+    SNV_MUTECT2 (samples.first(),
                 [[ id:'genome'], file(params.reference_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.fai_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.dict_file, checkIfExists: true)],
                 file(params.tumor_panel_bed, checkIfExists: true),
+                Channel.fromPath(params.tumor_panel_bed_files, checkIfExists: true),
                 file(params.gnomad_exome_vcf, checkIfExists: true),
                 file(params.gnomad_exome_vcf_tbi, checkIfExists: true),
                 file(params.exac_common_vcf, checkIfExists: true),
@@ -47,7 +48,7 @@ workflow {
                 [[ id:'genome'], file(params.reference_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.fai_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.dict_file, checkIfExists: true)],
-                [[ id:'genome'], file(params.tumor_panel_bed, checkIfExists: true),
+                [[ id:'genome'], file(params.tumor_panel_bed_gz, checkIfExists: true),
                                 file(params.tumor_panel_bed_tbi, checkIfExists: true)])
     ch_versions = ch_versions.mix( SNV_STRELKA2.out.versions )
 }
