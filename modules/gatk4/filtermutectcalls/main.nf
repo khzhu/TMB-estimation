@@ -32,7 +32,7 @@ process GATK4_FILTERMUTECTCALLS {
     """
     gatk --java-options "-Xmx${avail_mem}M -XX:-UsePerfData" \\
         FilterMutectCalls \\
-        --variant $vcf \\
+        --variant $input_vcf \\
         --output ${prefix}.vcf.gz \\
         --reference $fasta \\
         $table_command \\

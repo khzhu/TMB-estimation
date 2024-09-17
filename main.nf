@@ -31,9 +31,15 @@ workflow {
     ch_versions = Channel.empty()
 
     bed_files = Channel.fromPath(params.tumor_panel_bed_files, checkIfExists: true)
-
+    ch_input_files = samples.combine(bed_files)
+                    .map { meta, input_bams, input_index_files, intervals ->
+                        new_meta = meta.clone()
+                        new_meta.sid = intervals.baseName != "no_intervals" ? new_meta.id + "_" + intervals.baseName : new_meta.id
+                        intervals = intervals.baseName != "no_intervals" ? intervals : []
+                        [new_meta, input_bams, input_index_files, intervals]
+                    }
     // calling mutect2 somatic variants
-    SNV_MUTECT2 (samples.combine(bed_files),
+    SNV_MUTECT2 (ch_input_files,
                 [[ id:'genome'], file(params.reference_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.fai_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.dict_file, checkIfExists: true)],
