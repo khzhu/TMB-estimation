@@ -13,12 +13,10 @@ include { BCFTOOLS_NORM                                         } from '../../mo
 workflow SNV_MUTECT2 {
 
     take:
-    ch_input_files                    // channel: [mandatory] [ val(meta), path(ch_input_bams), path(ch_input_bams) ]
+    ch_input_files                    // channel: [mandatory] [ val(meta), path(ch_input_bams), path(ch_input_bams), path(intervals) ]
     ch_fasta                          // channel: [mandatory] [ val(meta), path(fasta) ]
     ch_fai                            // channel: [mandatory] [ val(meta), path(fasta) ]
     ch_dict                           // channel: [mandatory] [ val(meta), path(fasta) ]
-    intervals
-    bed_files
     germline_resource
     germline_resource_tbi
     pileup_variants
@@ -29,19 +27,16 @@ workflow SNV_MUTECT2 {
 
     GATK4_MUTECT2 ( ch_input_files,
                     ch_fasta, ch_fai, ch_dict,
-                    bed_files,
                     germline_resource, germline_resource_tbi)
     ch_versions = ch_versions.mix(GATK4_MUTECT2.out.versions)
 
     GETPILEUPSUMMARIES_TUMOR  ( ch_input_files,
-                                intervals,
                                 ch_fasta, ch_fai, ch_dict,
                                 pileup_variants,
                                 pileup_variants_tbi,
                                 false)
 
     GETPILEUPSUMMARIES_NORMAL ( ch_input_files,
-                                intervals,
                                 ch_fasta, ch_fai, ch_dict,
                                 pileup_variants,
                                 pileup_variants_tbi,
@@ -56,9 +51,11 @@ workflow SNV_MUTECT2 {
     BCFTOOLS_NORM ( GATK4_FILTERMUTECTCALLS.out.vcf.combine(GATK4_FILTERMUTECTCALLS.out.tbi, by: 0), ch_fasta )
     ch_versions = ch_versions.mix(BCFTOOLS_NORM.out.versions)
 
+    GATK4_MERGEVCFS ( BCFTOOLS_NORM.out.vcf, ch_dict )
+
     emit:
-    vcf      = BCFTOOLS_NORM.out.vcf        // channel: [ val(meta), path("*.vcf.gz") ]
-    tbi      = BCFTOOLS_NORM.out.tbi        // channel: [ val(meta), path("*.tbi") ]
+    vcf      = GATK4_MERGEVCFS.out.vcf      // channel: [ val(meta), path("*.vcf.gz") ]
+    tbi      = GATK4_MERGEVCFS.out.tbi      // channel: [ val(meta), path("*.tbi") ]
     stats    = GATK4_MUTECT2.out.stats      // channel: [ val(meta), path("*.stats") ]
     f1r2     = GATK4_MUTECT2.out.f1r2
     versions = ch_versions                  // channel: [ path(versions.yml) ]

@@ -3,8 +3,7 @@ process GATK4_GETPILEUPSUMMARIES {
     label 'process_low'
 
     input:
-    tuple val(meta), path(input_bams), path(input_index_files)
-    path  intervals
+    tuple val(meta), path(input_bams), path(input_index_files), path(intervals)
     tuple val(meta2), path(fasta)
     tuple val(meta2), path(fai)
     tuple val(meta2), path(dict)

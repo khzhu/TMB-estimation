@@ -27,6 +27,10 @@ input:
       type: list
       description: list of BAM files, also able to take CRAM as an input
       pattern: "*.{bam/cram}"
+  - input_index_files:
+      type: list
+      description: list of index files, also able to take CRAI as an input
+      pattern: "*.{bai/crai}"
   - intervals:
       type: file
       description: Specify region the tools is run on.

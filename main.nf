@@ -30,13 +30,13 @@ workflow {
                 [ file(it.bai_tumor, checkIfExists: true), file(it.bai_normal, checkIfExists: true) ] ) })
     ch_versions = Channel.empty()
 
+    bed_files = Channel.fromPath(params.tumor_panel_bed_files, checkIfExists: true)
+
     // calling mutect2 somatic variants
-    SNV_MUTECT2 (samples.first(),
+    SNV_MUTECT2 (samples.combine(bed_files),
                 [[ id:'genome'], file(params.reference_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.fai_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.dict_file, checkIfExists: true)],
-                file(params.tumor_panel_bed, checkIfExists: true),
-                Channel.fromPath(params.tumor_panel_bed_files, checkIfExists: true),
                 file(params.gnomad_exome_vcf, checkIfExists: true),
                 file(params.gnomad_exome_vcf_tbi, checkIfExists: true),
                 file(params.exac_common_vcf, checkIfExists: true),
