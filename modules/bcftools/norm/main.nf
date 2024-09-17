@@ -3,7 +3,7 @@ process BCFTOOLS_NORM {
     label 'process_medium'
 
     input:
-    tuple val(meta), path(vcf), path(tbi)
+    tuple val(meta), path(input_vcf), path(input_tbi)
     tuple val(meta2), path(fasta)
 
     output:
@@ -17,7 +17,7 @@ process BCFTOOLS_NORM {
 
     script:
     def args = task.ext.args ?: '--output-type z'
-    def prefix = task.ext.prefix ? "${meta.id}.${task.ext.prefix}" : "${meta.id}.pass.norm"
+    def prefix = task.ext.prefix ? "${meta.id}.${task.ext.prefix}" : "${input_vcf.baseName}.norm"
     def extension = args.contains("--output-type b") || args.contains("-Ob") ? "bcf.gz" :
                     args.contains("--output-type u") || args.contains("-Ou") ? "bcf" :
                     args.contains("--output-type z") || args.contains("-Oz") ? "vcf.gz" :
@@ -25,7 +25,7 @@ process BCFTOOLS_NORM {
                     "vcf.gz"
 
     """
-    zcat ${vcf} \\
+    zcat ${input_vcf} \\
         | grep -E '^#|PASS' \\
         | bcftools norm --multiallelics -both --output-type v - \\
         | bcftools norm --fasta-ref ${fasta} \\

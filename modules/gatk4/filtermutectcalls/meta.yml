@@ -22,16 +22,16 @@ input:
       description: |
         Groovy Map containing sample information
         e.g. [ id:'test' ]
-  - vcf:
+  - input_vcf:
       type: file
       description: compressed vcf file of mutect2calls
       pattern: "*.vcf.gz"
-  - tbi:
+  - input_tbi:
       type: file
       description: |
         An optional index of the VCF file (for when the VCF is compressed)
       pattern: "*.vcf.gz.tbi"
-  - stats:
+  - input_stats:
       type: file
       description: Stats file that pairs with output vcf file
       pattern: "*vcf.gz.stats"

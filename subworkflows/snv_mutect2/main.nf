@@ -8,6 +8,7 @@ include { GATK4_GETPILEUPSUMMARIES as GETPILEUPSUMMARIES_TUMOR  } from '../../mo
 include { GATK4_CALCULATECONTAMINATION                          } from '../../modules/gatk4/calculatecontamination/main'
 include { GATK4_FILTERMUTECTCALLS                               } from '../../modules/gatk4/filtermutectcalls/main'
 include { BCFTOOLS_NORM                                         } from '../../modules/bcftools/norm/main'
+include { GATK4_MERGEVCFS                                       } from '../../modules/gatk4/mergevcfs/main'
 
 
 workflow SNV_MUTECT2 {

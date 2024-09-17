@@ -35,7 +35,7 @@ process GATK4_GETPILEUPSUMMARIES {
         GetPileupSummaries \\
         $bam_file \\
         --variant $variants \\
-        --output ${prefix}.pileups.table \\
+        --output ${prefix}.${intervals.baseName}.pileups.table \\
         $reference_command \\
         $interval_command \\
         --tmp-dir . \\

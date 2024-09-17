@@ -3,7 +3,7 @@ process GATK4_FILTERMUTECTCALLS {
     label 'process_low'
 
     input:
-    tuple val(meta),  path(vcf), path(tbi), path(stats)
+    tuple val(meta),  path(input_vcf), path(input_tbi), path(input_stats)
     tuple val(meta),  path(table)
     tuple val(meta2), path(fasta)
     tuple val(meta2), path(fai)
@@ -20,7 +20,7 @@ process GATK4_FILTERMUTECTCALLS {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}.mutect2.filtered"
+    def prefix = task.ext.prefix ?: "${input_vcf.baseName}.filtered"
     def table_command = table ? table.collect{"--contamination-table $it"}.join(' ') : ''
 
     def avail_mem = 3072
