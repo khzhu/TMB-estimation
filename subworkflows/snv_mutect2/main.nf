@@ -8,7 +8,7 @@ include { GATK4_GETPILEUPSUMMARIES as GETPILEUPSUMMARIES_TUMOR  } from '../../mo
 include { GATK4_CALCULATECONTAMINATION                          } from '../../modules/gatk4/calculatecontamination/main'
 include { GATK4_FILTERMUTECTCALLS                               } from '../../modules/gatk4/filtermutectcalls/main'
 include { BCFTOOLS_NORM                                         } from '../../modules/bcftools/norm/main'
-include { GATK4_MERGEVCFS                                       } from '../../modules/gatk4/mergevcfs/main'
+include { GATK4_MERGEVCFS as MUTECT2_MERGEVCFS                  } from '../../modules/gatk4/mergevcfs/main'
 
 
 workflow SNV_MUTECT2 {
@@ -45,18 +45,26 @@ workflow SNV_MUTECT2 {
 
     GATK4_CALCULATECONTAMINATION ( GETPILEUPSUMMARIES_TUMOR.out.table,
                                     GETPILEUPSUMMARIES_NORMAL.out.table)
-    GATK4_FILTERMUTECTCALLS ( GATK4_MUTECT2.out.vcf.combine(GATK4_MUTECT2.out.tbi, by:[0,3]).combine(GATK4_MUTECT2.out.stats, by:[0,3]),
-                            GATK4_CALCULATECONTAMINATION.out.contamination,
-                            ch_fasta, ch_fai, ch_dict)
+    GATK4_FILTERMUTECTCALLS ( GATK4_MUTECT2.out.vcf.combine(GATK4_MUTECT2.out.tbi,
+                                by:[0,3]).combine(GATK4_MUTECT2.out.stats, by:[0,3]),
+                                GATK4_CALCULATECONTAMINATION.out.contamination,
+                                ch_fasta, ch_fai, ch_dict)
     
     BCFTOOLS_NORM ( GATK4_FILTERMUTECTCALLS.out.vcf.combine(GATK4_FILTERMUTECTCALLS.out.tbi, by:[0,3]), ch_fasta )
     ch_versions = ch_versions.mix(BCFTOOLS_NORM.out.versions)
 
-    GATK4_MERGEVCFS ( BCFTOOLS_NORM.out.vcf, ch_dict )
+    ch_vcf_files = BCFTOOLS_NORM
+                        .out.vcf
+                        .map { meta, norm_vcfs ->
+                            new_meta = meta.clone()
+                            new_meta.sid = ""
+                            [new_meta, norm_vcfs] }
+                        .groupTuple()
+    MUTECT2_MERGEVCFS ( ch_vcf_files, ch_dict )
 
     emit:
-    vcf      = GATK4_MERGEVCFS.out.vcf      // channel: [ val(meta), path("*.vcf.gz") ]
-    tbi      = GATK4_MERGEVCFS.out.tbi      // channel: [ val(meta), path("*.tbi") ]
+    vcf      = MUTECT2_MERGEVCFS.out.vcf      // channel: [ val(meta), path("*.vcf.gz") ]
+    tbi      = MUTECT2_MERGEVCFS.out.tbi      // channel: [ val(meta), path("*.tbi") ]
     stats    = GATK4_MUTECT2.out.stats      // channel: [ val(meta), path("*.stats") ]
     f1r2     = GATK4_MUTECT2.out.f1r2
     versions = ch_versions                  // channel: [ path(versions.yml) ]
