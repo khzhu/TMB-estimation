@@ -45,7 +45,7 @@ workflow SNV_STRELKA2 {
         | map { sample, snv_vcf, indel_vcf ->
             tuple( sample, [snv_vcf, indel_vcf] ) }
     STRELKA2_MERGEVCFS ( ch_input_vcfs, ch_dict )
-    ch_versions = ch_versions.mix(GATK4_MERGEVCFS.out.versions)
+    ch_versions = ch_versions.mix(STRELKA2_MERGEVCFS.out.versions)
 
     emit:
     vcf      = STRELKA2_MERGEVCFS.out.vcf       // channel: [ val(meta), path("*.vcf.gz") ]
