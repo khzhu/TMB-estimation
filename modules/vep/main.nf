@@ -6,7 +6,7 @@ process VEP {
     input:
     tuple val(meta), path(input_vcf)
     tuple val(meta2), path(fasta)       // Required
-    path cosmic_vcf
+    tuple val(meta3), path(cosmic_vcf), path(cosmic_vcf_tbi)
     path vep_cache                      // Required for VEP running. A default of /.vep is supplied.
 
     output:
