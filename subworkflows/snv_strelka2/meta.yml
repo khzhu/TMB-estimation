@@ -37,22 +37,11 @@ input:
       type: file
       description: BED file containing target regions for variant calling
       pattern: "*.{bed}"
-  - gnomad_vcf:
-      type: file
-      description: |
-        Path to gnomAD VCF file. Required for correct running of VEP.
-  - gnomad_vcf_tbi:
-      type: file
-      description: |
-        Path to gnomAD VCF file. Required for correct running of VEP.
   - cosmic_vcf:
       type: file
       description: |
         Path to COSMIC VCF file. Required for correct running of VEP.
-  - cosmic_vcf_tbi:
-      type: file
-      description: |
-        Path to COSMIC VCF index file. Required for correct running of VEP.
+      pattern: "*.vcf"
   - vep_cache:
       type: path
       description: |

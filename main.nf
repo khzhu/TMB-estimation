@@ -58,10 +58,7 @@ workflow {
                 [[ id:'genome'], file(params.dict_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.tumor_panel_bed_gz, checkIfExists: true),
                                     file(params.tumor_panel_bed_tbi, checkIfExists: true)],
-                file(params.gnomad_exome_vcf, checkIfExists: true),
-                file(params.gnomad_exome_vcf_tbi, checkIfExists: true),
                 file(params.cosmic_vcf, checkIfExists: true),
-                file(params.cosmic_vcf_tbi, checkIfExists: true),
                 file(params.vep_cache, checkIfExists: true),
                 file(params.filter_vcf, checkIfExists: true))
     ch_versions = ch_versions.mix( SNV_STRELKA2.out.versions )

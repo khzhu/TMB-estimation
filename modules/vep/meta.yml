@@ -25,22 +25,19 @@ input:
       type: file
       description: |
         Input VCF file for VEP annotation.
-  - gnomad_vcf:
-      type: file
+  - meta2:
+      type: map
       description: |
-        Path to gnomAD VCF file. Required for correct running of VEP.
-  - gnomad_vcf_tbi:
+        Groovy Map containing reference information
+        e.g. [ id:'genome' ]
+  - fasta:
       type: file
-      description: |
-        Path to gnomAD VCF file. Required for correct running of VEP.
+      description: Genome reference FASTA file
+      pattern: "*.{fa,fasta}"
   - cosmic_vcf:
       type: file
       description: |
         Path to COSMIC VCF file. Required for correct running of VEP.
-  - cosmic_vcf_tbi:
-      type: file
-      description: |
-        Path to COSMIC VCF index file. Required for correct running of VEP.
   - vep_cache:
       type: file
       description: |

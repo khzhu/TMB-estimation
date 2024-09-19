@@ -19,10 +19,7 @@ workflow SNV_STRELKA2 {
     ch_fai          // channel: [mandatory] [ val(meta2), path(fai) ]
     ch_dict         // channel: [mandatory] [ val(meta2), path(dict) ]
     ch_target_bed   // channel: [mandatory] [ val(meta3), path(bed), path(bed_tbi) ]
-    gnomad_vcf
-    gnomad_vcf_tbi
     cosmic_vcf
-    cosmic_vcf_tbi
     vep_cache
     filter_vcf
 
@@ -58,8 +55,7 @@ workflow SNV_STRELKA2 {
 
     STRELKA2_VEP ( STRELKA2_MERGEVCFS.out.vcf,
                     ch_fasta,
-                    [[id:'gnomad'], gnomad_vcf.combine(gnomad_vcf_tbi)],
-                    [[id:'cosmic'], cosmic_vcf.combine(cosmic_vcf_tbi)],
+                    cosmic_vcf,
                     vep_cache)
     ch_versions = ch_versions.mix(STRELKA2_VEP.out.versions)
 
