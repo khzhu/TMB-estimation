@@ -39,6 +39,19 @@ input:
       description: |
         Groovy Map containing reference information
         e.g. [ id:'cosmic' ]
+  - gnomad_vcf:
+      type: file
+      description: |
+        Path to gnomAD VCF file. Required for correct running of VEP.
+  - gnomad_vcf_tbi:
+      type: file
+      description: |
+        Path to gnomAD VCF index file. Required for correct running of VEP.
+  - meta4:
+      type: map
+      description: |
+        Groovy Map containing reference information
+        e.g. [ id:'cosmic' ]
   - cosmic_vcf:
       type: file
       description: |
@@ -61,6 +74,10 @@ output:
       type: file
       description: VEP annotated VCF file
       pattern: "*.vcf"
+  - html:
+      type: file
+      description: VEP summary report
+      pattern: "*.html"
   - versions:
       type: file
       description: File containing software versions

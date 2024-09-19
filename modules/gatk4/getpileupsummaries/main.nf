@@ -7,8 +7,7 @@ process GATK4_GETPILEUPSUMMARIES {
     tuple val(meta2), path(fasta)
     tuple val(meta2), path(fai)
     tuple val(meta2), path(dict)
-    path  variants
-    path  variants_tbi
+    tuple val(meta3), path(variants), path(variants_tbi)
     val   control_bam
 
     output:

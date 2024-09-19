@@ -50,6 +50,11 @@ input:
       type: file
       description: GATK sequence dictionary
       Structure: [ val(meta2), path(*.dict) ]
+  - meta3:
+      type: map
+      description: |
+        Groovy Map containing reference information
+        e.g. [ id:'gnomad' ]
   - germline_resource:
       type: file
       description: Population vcf of germline sequencing, containing allele fractions.
@@ -58,6 +63,11 @@ input:
       type: file
       description: Index file for the germline resource.
       pattern: "*.vcf.gz.tbi"
+  - meta4:
+      type: map
+      description: |
+        Groovy Map containing reference information
+        e.g. [ id:'gnomad' ]
   - pileup_variants:
       type: file
       description: Population vcf of pileup variants.
@@ -66,14 +76,23 @@ input:
       type: file
       description: Index file for the pileup variants.
       pattern: "*.vcf.gz.tbi"
+  - meta5:
+      type: map
+      description: |
+        Groovy Map containing reference information
+        e.g. [ id:'cosmic' ]
+  - cosmic_vcf:
+      type: file
+      description: |
+        Path to COSMIC VCF file. Required for correct running of VEP.
+  - cosmic_vcf_tbi:
+      type: file
+      description: |
+        Path to COSMIC VCF index file. Required for correct running of VEP.
   - vep_cache:
       type: path
       description: |
         Path to VEP cache dir. Required for correct running of VEP.
-  - filter_vcf:
-      type: file
-      description: Path to filter VCF. Required for correct running of VEP.
-      pattern: "*.vcf"
 output:
   - vcf:
       type: file
@@ -83,6 +102,18 @@ output:
       type: file
       description: Index of vcf file
       pattern: "*vcf.gz.tbi"
+  - vep:
+      type: file
+      description: vep annotated vcf file
+      pattern: "*.vcf"
+  - html:
+      type: file
+      description: vep summary report file
+      pattern: "*.html"
+  - maf:
+      type: file
+      description: vep annotated maf file
+      pattern: "*.maf"
   - stats:
       type: file
       description: Stats file that pairs with output vcf file

@@ -46,6 +46,11 @@ input:
       type: file
       description: GATK sequence dictionary
       Structure: [ val(meta2), path(*.dict) ]
+  - meta3:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'germline' ]
   - variants:
       type: file
       description: Population vcf of germline sequencing, containing allele fractions. Is also used as sites file if no separate sites file is specified.

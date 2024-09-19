@@ -37,19 +37,6 @@ input:
       type: file
       description: BED file containing target regions for variant calling
       pattern: "*.{bed}"
-  - cosmic_vcf:
-      type: file
-      description: |
-        Path to COSMIC VCF file. Required for correct running of VEP.
-      pattern: "*.vcf"
-  - vep_cache:
-      type: path
-      description: |
-        Path to VEP cache dir. Required for correct running of VEP.
-  - filter_vcf:
-      type: file
-      description: Path to filter VCF. Required for correct running of VEP.
-      pattern: "*.vcf"
   - meta2:
       type: map
       description: |
@@ -68,6 +55,36 @@ input:
       type: file
       description: Genome reference FASTA index file
       pattern: "*.{fa.fai,fasta.fai}"
+  - meta3:
+      type: map
+      description: |
+        Groovy Map containing reference information
+        e.g. [ id:'cosmic' ]
+  - gnomad_vcf:
+      type: file
+      description: |
+        Path to gnomAD VCF file. Required for correct running of VEP.
+  - gnomad_vcf_tbi:
+      type: file
+      description: |
+        Path to gnomAD VCF index file. Required for correct running of VEP.
+  - meta4:
+      type: map
+      description: |
+        Groovy Map containing reference information
+        e.g. [ id:'cosmic' ]
+  - cosmic_vcf:
+      type: file
+      description: |
+        Path to COSMIC VCF file. Required for correct running of VEP.
+  - cosmic_vcf_tbi:
+      type: file
+      description: |
+        Path to COSMIC VCF index file. Required for correct running of VEP.
+  - vep_cache:
+      type: path
+      description: |
+        Path to VEP cache dir. Required for correct running of VEP.
 output:
   - meta:
       type: map
@@ -77,11 +94,19 @@ output:
   - vcf:
       type: file
       description: Gzipped VCF file containing SNV and INDEL variants
-      pattern: "*.{vcf.gz}"
+      pattern: "*.{vcf,vcf.gz}"
   - vcf_tbi:
       type: file
       description: Index for gzipped VCF file containing all variants
       pattern: "*.{vcf.gz.tbi}"
+  - maf:
+      type: file
+      description: VEP annotated MAF file containing SNV and INDEL variants
+      pattern: "*.maf"
+  - html:
+      type: file
+      description: VEP annotated summary report
+      pattern: "*.html"
   - versions:
       type: file
       description: File containing software versions

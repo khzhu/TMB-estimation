@@ -9,6 +9,7 @@ include { GATK4_CALCULATECONTAMINATION                          } from '../../mo
 include { GATK4_FILTERMUTECTCALLS                               } from '../../modules/gatk4/filtermutectcalls/main'
 include { BCFTOOLS_NORM                                         } from '../../modules/bcftools/norm/main'
 include { GATK4_MERGEVCFS as MUTECT2_MERGEVCFS                  } from '../../modules/gatk4/mergevcfs/main'
+include { VEP as MUTECT2_VEP                                    } from '../../modules/vep/main'
 include { VCF2MAF as MUTECT2_VCF2MAF                            } from '../../modules/vcf2maf/main'
 
 
@@ -19,10 +20,9 @@ workflow SNV_MUTECT2 {
     ch_fasta                          // channel: [mandatory] [ val(meta), path(fasta) ]
     ch_fai                            // channel: [mandatory] [ val(meta), path(fasta) ]
     ch_dict                           // channel: [mandatory] [ val(meta), path(fasta) ]
-    germline_resource
-    germline_resource_tbi
-    pileup_variants
-    pileup_variants_tbi
+    ch_germline_resource
+    ch_pileup_variants
+    ch_cosmic_vcf
     vep_cache
 
     main:
@@ -30,19 +30,17 @@ workflow SNV_MUTECT2 {
 
     GATK4_MUTECT2 ( ch_input_files,
                     ch_fasta, ch_fai, ch_dict,
-                    germline_resource, germline_resource_tbi)
+                    ch_germline_resource)
     ch_versions = ch_versions.mix(GATK4_MUTECT2.out.versions)
 
     GETPILEUPSUMMARIES_TUMOR  ( ch_input_files,
                                 ch_fasta, ch_fai, ch_dict,
-                                pileup_variants,
-                                pileup_variants_tbi,
+                                ch_pileup_variants,
                                 false)
 
     GETPILEUPSUMMARIES_NORMAL ( ch_input_files,
                                 ch_fasta, ch_fai, ch_dict,
-                                pileup_variants,
-                                pileup_variants_tbi,
+                                ch_pileup_variants,
                                 true)
 
     GATK4_CALCULATECONTAMINATION ( GETPILEUPSUMMARIES_TUMOR.out.table,
@@ -64,12 +62,21 @@ workflow SNV_MUTECT2 {
                         .groupTuple()
     MUTECT2_MERGEVCFS ( ch_vcf_files, ch_dict )
 
-    MUTECT2_VCF2MAF ( MUTECT2_MERGEVCFS.out.vcf, ch_fasta, vep_cache)
+    MUTECT2_VEP ( MUTECT2_MERGEVCFS.out.vcf,
+                    ch_fasta,
+                    ch_germline_resource,
+                    ch_cosmic_vcf,
+                    vep_cache)
+    ch_versions = ch_versions.mix(MUTECT2_VEP.out.versions)
+
+    MUTECT2_VCF2MAF ( STRELKA2_VEP.out.vcf, ch_fasta, vep_cache)
     ch_versions = ch_versions.mix(MUTECT2_VCF2MAF.out.versions)
 
     emit:
     vcf      = MUTECT2_MERGEVCFS.out.vcf    // channel: [ val(meta), path("*.vcf.gz") ]
     tbi      = MUTECT2_MERGEVCFS.out.tbi    // channel: [ val(meta), path("*.tbi") ]
+    vep      = MUTECT2_VEP.out.vcf          // channel: [ val(meta), path("*.vep.vcf") ]
+    html     = MUTECT2_VEP.out.html         // channel: [ val(meta), path("*.html")]
     maf      = MUTECT2_VCF2MAF.out.maf      // channel: [ val(meta), path("*.maf") ]
     stats    = GATK4_MUTECT2.out.stats      // channel: [ val(meta), path("*.stats") ]
     f1r2     = GATK4_MUTECT2.out.f1r2

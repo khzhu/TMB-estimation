@@ -7,9 +7,7 @@ process GATK4_MUTECT2 {
     tuple val(meta2), path(fasta)
     tuple val(meta2), path(fai)
     tuple val(meta2), path(dict)
-
-    path(germline_resource)
-    path(germline_resource_tbi)
+    tuple val(meta3), path(germline_resource), path(germline_resource_tbi)
 
     output:
     tuple val(meta), path("*.vcf.gz")     , emit: vcf

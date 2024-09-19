@@ -43,12 +43,13 @@ workflow {
                 [[ id:'genome'], file(params.reference_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.fai_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.dict_file, checkIfExists: true)],
-                file(params.gnomad_exome_vcf, checkIfExists: true),
-                file(params.gnomad_exome_vcf_tbi, checkIfExists: true),
-                file(params.exac_common_vcf, checkIfExists: true),
-                file(params.exac_common_vcf_tbi, checkIfExists: true),
-                file(params.vep_cache, checkIfExists: true),
-                file(params.filter_vcf, checkIfExists: true))
+                [[id:'gnomad'],file(params.gnomad_exome_vcf, checkIfExists: true),
+                    file(params.gnomad_exome_vcf_tbi, checkIfExists: true)],
+                [[id:'exac'], file(params.exac_common_vcf, checkIfExists: true),
+                    file(params.exac_common_vcf_tbi, checkIfExists: true)],
+                [[id: 'cosmic'], file(params.cosmic_vcf, checkIfExists: true),
+                    file(params.cosmic_vcf_tbi, checkIfExists: true)],
+                file(params.vep_cache, checkIfExists: true))
     ch_versions = ch_versions.mix( SNV_MUTECT2.out.versions )
 
     // calling strelka2 somatic variants
@@ -58,9 +59,10 @@ workflow {
                 [[ id:'genome'], file(params.dict_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.tumor_panel_bed_gz, checkIfExists: true),
                                     file(params.tumor_panel_bed_tbi, checkIfExists: true)],
+                [[id: 'gnomad'], file(params.gnomad_exome_vcf, checkIfExists: true),
+                                    file(params.gnomad_exome_vcf_tbi, checkIfExists: true)],
                 [[id: 'cosmic'], file(params.cosmic_vcf, checkIfExists: true),
                                     file(params.cosmic_vcf_tbi, checkIfExists: true)],
-                file(params.vep_cache, checkIfExists: true),
-                file(params.filter_vcf, checkIfExists: true))
+                file(params.vep_cache, checkIfExists: true))
     ch_versions = ch_versions.mix( SNV_STRELKA2.out.versions )
 }
