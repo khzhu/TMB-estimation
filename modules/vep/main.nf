@@ -21,16 +21,13 @@ process VEP {
     def prefix        = task.ext.prefix ?: "${input_vcf.baseName}.vep"
 
     """
-    gunzip -kd $input_vcf > ${input_vcf.baseName}.vcf
-
-    vep \\
-        --fork ${task.cpus} \\
+    vep --fork ${task.cpus} \\
         $args \\
-        --custom $cosmic_vcf,COSMIC,vcf,exact,0,ID
+        --custom $cosmic_vcf,COSMIC,vcf,exact,0,ID \\
         --dir $vep_cache \\
         --fasta $fasta \\
         --input_file $input_vcf \\
-        --output_file ${prefix}.vcf'
+        --output_file ${prefix}.vcf
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

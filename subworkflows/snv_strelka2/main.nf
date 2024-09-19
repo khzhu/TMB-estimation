@@ -59,7 +59,7 @@ workflow SNV_STRELKA2 {
                     vep_cache)
     ch_versions = ch_versions.mix(STRELKA2_VEP.out.versions)
 
-    STRELKA2_VEP2MAF ( STRELKA2_MERGEVCFS.out.vcf, ch_fasta, vep_cache, filter_vcf)
+    STRELKA2_VEP2MAF ( STRELKA2_VEP.out.vcf, ch_fasta, vep_cache, filter_vcf)
     ch_versions = ch_versions.mix(STRELKA2_VEP2MAF.out.versions)
 
     emit:
