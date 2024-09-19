@@ -66,6 +66,10 @@ input:
       type: file
       description: Index file for the pileup variants.
       pattern: "*.vcf.gz.tbi"
+  - vep_cache:
+      type: path
+      description: |
+        Path to VEP cache dir. Required for correct running of VEP.
 output:
   - vcf:
       type: file
