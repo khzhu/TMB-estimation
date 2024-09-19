@@ -70,6 +70,10 @@ input:
       type: path
       description: |
         Path to VEP cache dir. Required for correct running of VEP.
+  - filter_vcf:
+      type: file
+      description: Path to filter VCF. Required for correct running of VEP.
+      pattern: "*.vcf"
 output:
   - vcf:
       type: file

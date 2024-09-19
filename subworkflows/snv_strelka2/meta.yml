@@ -37,6 +37,14 @@ input:
       type: file
       description: BED file containing target regions for variant calling
       pattern: "*.{bed}"
+  - vep_cache:
+      type: path
+      description: |
+        Path to VEP cache dir. Required for correct running of VEP.
+  - filter_vcf:
+      type: file
+      description: Path to filter VCF. Required for correct running of VEP.
+      pattern: "*.vcf"
   - meta2:
       type: map
       description: |

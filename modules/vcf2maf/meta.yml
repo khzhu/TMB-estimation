@@ -28,6 +28,11 @@ input:
       type: file
       description: |
         Path to VEP cache dir. Required for correct running of VEP.
+  - filter_vcf:
+      type: file
+      description: |
+        vcf to filter common variants. Must be uncompressed.\
+      pattern: "*.vcf"
 output:
   - meta:
       type: map

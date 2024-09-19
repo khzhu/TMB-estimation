@@ -7,6 +7,7 @@ process VCF2MAF {
     tuple val(meta), path(input_vcf) // Use an uncompressed VCF file!
     path fasta                 // Required
     path vep_cache             // Required for VEP running. A default of /.vep is supplied.
+    path filter_vcf
 
     output:
     tuple val(meta), path("*.maf"), emit: maf
@@ -43,6 +44,7 @@ process VCF2MAF {
         $args2 \\
         $vep_cache_cmd \\
         --ref-fasta $fasta \\
+        --filter-vcf $filter_vcf \\
         --input-vcf $input_vcf \\
         --tumor-id $tumor_id \\
         --normal-id $normal_id \\
