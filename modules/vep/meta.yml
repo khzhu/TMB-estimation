@@ -1,0 +1,65 @@
+name: "vep"
+description: Variant Effect predictor
+keywords:
+  - vep
+  - annotation
+  - gnomad
+  - cosmic
+  - refseq
+tools:
+  - "vcf2maf":
+      description: |
+        "VEP determines the effect of your variants (SNPs, insertions, deletions, CNVs or structural variants) on genes, transcripts, and protein sequence, as well as regulatory regions."
+      homepage: "https://useast.ensembl.org/info/docs/tools/vep/index.html"
+      documentation: "http://www.ensembl.org/info/docs/tools/vep/script/vep_options.html"
+      tool_dev_url: "https://github.com/Ensembl/ensembl-vep"
+      doi: "10.6019/TOL.Ensembl-VEP-w.2021.00001.1"
+      licence: ["Apache-2.0"]
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - input_vcf:
+      type: file
+      description: |
+        Input VCF file for VEP annotation.
+  - gnomad_vcf:
+      type: file
+      description: |
+        Path to gnomAD VCF file. Required for correct running of VEP.
+  - gnomad_vcf_tbi:
+      type: file
+      description: |
+        Path to gnomAD VCF file. Required for correct running of VEP.
+  - cosmic_vcf:
+      type: file
+      description: |
+        Path to COSMIC VCF file. Required for correct running of VEP.
+  - cosmic_vcf_tbi:
+      type: file
+      description: |
+        Path to COSMIC VCF index file. Required for correct running of VEP.
+  - vep_cache:
+      type: file
+      description: |
+        Path to VEP cache dir. Required for correct running of VEP.
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - vcf:
+      type: file
+      description: VEP annotated VCF file
+      pattern: "*.vcf"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@kelseyz"
+maintainers:
+  - "@kelseyz"

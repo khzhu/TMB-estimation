@@ -24,6 +24,15 @@ input:
       type: file
       description: |
         vcf to convert to MAF format. Must be uncompressed.
+  - meta2:
+      type: map
+      description: |
+        Groovy Map containing reference information
+        e.g. [ id:'genome' ]
+  - fasta:
+      type: file
+      description: Genome reference FASTA file
+      pattern: "*.{fa,fasta}"
   - vep_cache:
       type: file
       description: |

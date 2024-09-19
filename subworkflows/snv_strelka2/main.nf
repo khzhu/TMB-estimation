@@ -7,7 +7,9 @@ include { STRELKA_SOMATIC                       } from '../../modules/strelka/ma
 include { BCFTOOLS_NORM as BCFTOOLS_NORM_SNV    } from '../../modules/bcftools/norm/main'
 include { BCFTOOLS_NORM as BCFTOOLS_NORM_INDEL  } from '../../modules/bcftools/norm/main'
 include { GATK4_MERGEVCFS as STRELKA2_MERGEVCFS } from '../../modules/gatk4/mergevcfs/main'
+include { VEP as STRELKA2_VEP                   } from '../../modules/vep/main'
 include { VCF2MAF as STRELKA2_VEP2MAF           } from '../../modules/vcf2maf/main'
+
 
 workflow SNV_STRELKA2 {
 
@@ -17,6 +19,10 @@ workflow SNV_STRELKA2 {
     ch_fai          // channel: [mandatory] [ val(meta2), path(fai) ]
     ch_dict         // channel: [mandatory] [ val(meta2), path(dict) ]
     ch_target_bed   // channel: [mandatory] [ val(meta3), path(bed), path(bed_tbi) ]
+    gnomad_vcf
+    gnomad_vcf_tbi
+    cosmic_vcf
+    cosmic_vcf_tbi
     vep_cache
     filter_vcf
 
@@ -50,12 +56,20 @@ workflow SNV_STRELKA2 {
     STRELKA2_MERGEVCFS ( ch_input_vcfs, ch_dict )
     ch_versions = ch_versions.mix(STRELKA2_MERGEVCFS.out.versions)
 
+    STRELKA2_VEP ( STRELKA2_MERGEVCFS.out.vcf,
+                    ch_fasta,
+                    [[id:'gnomad'], gnomad_vcf.combine(gnomad_vcf_tbi)],
+                    [[id:'cosmic'], cosmic_vcf.combine(cosmic_vcf_tbi)],
+                    vep_cache)
+    ch_versions = ch_versions.mix(STRELKA2_VEP.out.versions)
+
     STRELKA2_VEP2MAF ( STRELKA2_MERGEVCFS.out.vcf, ch_fasta, vep_cache, filter_vcf)
     ch_versions = ch_versions.mix(STRELKA2_VEP2MAF.out.versions)
 
     emit:
     vcf      = STRELKA2_MERGEVCFS.out.vcf    // channel: [ val(meta), path("*.vcf.gz") ]
     tbi      = STRELKA2_MERGEVCFS.out.tbi    // channel: [ val(meta), path("*.tbi") ]
+    vep      = STRELKA2_VEP.out.vcf
     maf      = STRELKA2_VEP2MAF.out.maf      // channel: [ val(meta), path("*.maf") ]
     versions = ch_versions                   // channel: [ path(versions.yml) ]
 }
