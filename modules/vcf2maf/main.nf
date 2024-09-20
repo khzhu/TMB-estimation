@@ -4,7 +4,7 @@ process VCF2MAF {
     label 'process_medium'
 
     input:
-    tuple val(meta), path(input_vcf), path(input_vep_vcf) // Use an uncompressed VCF file!
+    tuple val(meta), path(input_vep_vcf) // Use an uncompressed VCF file!
     tuple val(meta2), path(fasta)    // Required
     path vep_cache                   // Required for VEP running. A default of /.vep is supplied.
 
@@ -24,21 +24,19 @@ process VCF2MAF {
     // If VEP is not present they will be blank
     def VERSION = '1.6.22' // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
     """
-    gunzip -f $input_vcf
     vcf2maf.pl \\
         $args \\
         --ref-fasta $fasta \\
         --input-vcf $input_vep_vcf \\
-        --tumor-id $tumor_id \\
-        --normal-id $normal_id \\
-        --vcf-tumor-id ${meta.id}_T \\
-        --vcf-normal-id ${meta.id}_N \\
+        --tumor-id ${meta.id}_T  \\
+        --normal-id ${meta.id}_N \\
+        --vcf-tumor-id $tumor_id \\
+        --vcf-normal-id $normal_id \\
         --output-maf ${prefix}.maf
-        --tmp-dir .
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        vcf2maf: $VERSION\$VEP_VERSION
+        vcf2maf: $VERSION
     END_VERSIONS
     """
 }
