@@ -40,10 +40,12 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
         //Split trimmed reads into 2 parts
         SEQKIT_SPLIT2 ( reads )
         ch_versions = ch_versions.mix(SEQKIT_SPLIT2.out.versions)
-        ch_part1 = Channel.fromFilePairs( SEQKIT_SPLIT2.out + '/*_{N,T}_{1,2}*part_001.fastq.gz', checkExists: true)
-        ch_part2 = Channel.fromFilePairs( SEQKIT_SPLIT2.out + '/*_{N,T}_{1,2}*part_002.fastq.gz', checkExists: true)
-        BWA_MEM  ( ch_part1, bwa_index, [[id:'genome'],fasta], val_sort_bam )
-        BWA_MEM2 ( ch_part2, bwa_index, [[id:'genome'],fasta], val_sort_bam )
+        split_reads = SEQKIT_SPLIT2.out.reads.branch{
+            part1 : it[1] =~ /^*_{N,T}_{1,2}*part_001*/
+            part2 : it[1] =~ /^*_{N,T}_{1,2}*part_002*/
+        }
+        BWA_MEM  ( split_reads.part1, bwa_index, [[id:'genome'],fasta], val_sort_bam )
+        BWA_MEM2 ( split_reads.part2, bwa_index, [[id:'genome'],fasta], val_sort_bam )
         ch_versions = ch_versions.mix(BWA_MEM.out.versions)
         SAMBAMBA_MERGE ( BWA_MEM.out.bam.combine(BWA_MEM2.out.bam, by:0) )
         // Sort bam with samtools
