@@ -19,10 +19,9 @@ process SAMBAMBA_MERGE {
 
     """
     sambamba \\
-        merge \\
-        $args \\
+        merge $args \\
         -t $task.cpus \\
-        -o ${prefix}.bam \\
+        ${prefix}.bam \\
         $input_list
 
     cat <<-END_VERSIONS > versions.yml

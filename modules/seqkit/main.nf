@@ -3,7 +3,7 @@ process SEQKIT_SPLIT2 {
     label 'process_medium'
 
     input:
-    tuple val(meta), path(trim_reads)
+    tuple val(meta), path(reads)
 
     output:
     tuple val(meta), path("**/*.gz"), emit: reads
@@ -21,7 +21,7 @@ process SEQKIT_SPLIT2 {
             split2 \\
             $args \\
             --threads $task.cpus \\
-            $trim_reads \\
+            $reads \\
             --out-dir ${prefix}
 
         cat <<-END_VERSIONS > versions.yml
