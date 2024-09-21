@@ -53,6 +53,7 @@ workflow {
                 file(params.known_snp_vcf, checkIfExists: true),
                 file(params.known_snp_vcf_tbi, checkIfExists: true),
                 file(params.known_indel_vcf, checkIfExists: true),
-                file(params.known_indel_vcf_tbi, checkIfExists: true) )
+                file(params.known_indel_vcf_tbi, checkIfExists: true),
+                params.split_reads)
     ch_versions = ch_versions.mix( ALIGN_MARKDUP_BQSR_STATS.out.versions )
 }

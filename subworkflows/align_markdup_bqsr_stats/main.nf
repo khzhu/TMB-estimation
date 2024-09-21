@@ -2,7 +2,9 @@
 // Alignment to genome with BWA and sort reads by SAMBAMBA
 //
 
+include { SEQKIT_SPLIT2          } from '../../modules/seqkit/main'
 include { BWA_MEM                } from '../../modules/bwa/mem/main'
+include { SAMBAMBA_MERGE         } from '../../modules/sambamba/merge/main'
 include { SAMTOOLS_SORT          } from '../../modules/samtools/sort/main'
 include { SAMBAMBA_MARKDUP       } from '../../modules/sambamba/markdup/main'
 include { SAMBAMBA_FLAGSTAT      } from '../../modules/sambamba/flagstat/main'
@@ -25,6 +27,7 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
     snp_known_sites_tbi    // channel: [ path(known_sites_tbi) ]
     indel_known_sites      // channel: [ path(known_sites) ]
     indel_known_sites_tbi  // channel: [ path(known_sites_tbi)
+    split_reads            // boolean (mandatory): true or false
 
     main:
     ch_versions = Channel.empty()
@@ -32,14 +35,23 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
     //
     // Map reads with BWA
     //
-    BWA_MEM ( reads, bwa_index, [[id:'genome'],fasta], val_sort_bam )
-    ch_versions = ch_versions.mix(BWA_MEM.out.versions)
-
-    //
-    // Sort bam with samtools
-    //
-    SAMTOOLS_SORT ( BWA_MEM.out.bam , [[id:'genome'],fasta] )
-    ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions)
+    if ( split_reads ) {
+        //Split trimmed reads into 2 parts
+        SEQKIT_SPLIT2 ( reads )
+        ch_versions = ch_versions.mix(SEQKIT_SPLIT2.out.versions)
+        BWA_MEM ( SEQKIT_SPLIT2.out.reads, bwa_index, [[id:'genome'],fasta], val_sort_bam )
+        ch_versions = ch_versions.mix(BWA_MEM.out.versions)
+        SAMBAMBA_MERGE ( BWA_MEM.out.bam )
+        // Sort bam with samtools
+        SAMTOOLS_SORT ( SAMBAMBA_MERGE.out.bam , [[id:'genome'],fasta] )
+        ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions)
+    } else {
+        BWA_MEM ( reads, bwa_index, [[id:'genome'],fasta], val_sort_bam )
+        ch_versions = ch_versions.mix(BWA_MEM.out.versions)
+        // Sort bam with samtools
+        SAMTOOLS_SORT ( BWA_MEM.out.bam , [[id:'genome'],fasta] )
+        ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions)
+    }
 
     //
     // Run sambamba deduplicate and flagstat

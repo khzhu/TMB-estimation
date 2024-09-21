@@ -1,0 +1,40 @@
+name: "sambamba_merge"
+description: merge split bams into one
+keywords:
+  - sort
+  - bam
+tools:
+  - "sambamba":
+      description: "process your BAM data faster!"
+      homepage: "https://lomereiter.github.io/sambamba/docs/sambamba-view.html"
+      documentation: "https://lomereiter.github.io/sambamba/docs/sambamba-view.html"
+      tool_dev_url: "https://github.com/biod/sambamba"
+      licence: ["GPL v2"]
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - bams:
+      type: list
+      description: BAM file
+      pattern: "*.bam"
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+  - bam:
+      type: file
+      description: Merged BAM file
+      pattern: "*.bam"
+authors:
+  - "@kelseyz"
+maintainers:
+  - "@kelseyz"
