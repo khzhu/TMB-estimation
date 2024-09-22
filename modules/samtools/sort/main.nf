@@ -3,7 +3,7 @@ process SAMTOOLS_SORT {
     label 'process_medium'
 
     input:
-    tuple val(meta) , path(bam)
+    tuple val(meta) , path(input_bam)
     tuple val(meta2), path(fasta)
 
     output:
@@ -18,17 +18,17 @@ process SAMTOOLS_SORT {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${input_bam.baseName}.sort"
     def extension = args.contains("--output-fmt sam") ? "sam" :
                     args.contains("--output-fmt cram") ? "cram" :
                     "bam"
     def reference = fasta ? "--reference ${fasta}" : ""
-    if ("$bam" == "${prefix}.bam") error "Input and output names are the same, use \"task.ext.prefix\" to disambiguate!"
+    if ("$input_bam" == "${prefix}.bam") error "Input and output names are the same, use \"task.ext.prefix\" to disambiguate!"
 
     """
     samtools cat \\
         --threads $task.cpus \\
-        ${bam} \\
+        ${input_bam} \\
     | \\
     samtools sort \\
         $args \\

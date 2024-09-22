@@ -2,17 +2,18 @@
 // Alignment to genome with BWA and sort reads by SAMBAMBA
 //
 
-include { SEQKIT_SPLIT2          } from '../../modules/seqkit/main'
-include { BWA_MEM as BWA_MEM1    } from '../../modules/bwa/mem/main'
-include { BWA_MEM as BWA_MEM2    } from '../../modules/bwa/mem/main'
-include { SAMBAMBA_MERGE         } from '../../modules/sambamba/merge/main'
-include { SAMTOOLS_SORT          } from '../../modules/samtools/sort/main'
-include { SAMBAMBA_MARKDUP       } from '../../modules/sambamba/markdup/main'
-include { SAMBAMBA_FLAGSTAT      } from '../../modules/sambamba/flagstat/main'
-include { GATK4_BASERECALIBRATOR } from '../../modules/gatk4/baserecalibrator/main'
-include { GATK4_APPLYBQSR        } from '../../modules/gatk4/applybqsr/main'
-include { SAMTOOLS_STATS         } from '../../modules/samtools/stats/main'
-include { SAMTOOLS_CONVERT       } from '../../modules/samtools/convert/main'
+include { SEQKIT_SPLIT2              } from '../../modules/seqkit/main'
+include { BWA_MEM as BWA_MEM1        } from '../../modules/bwa/mem/main'
+include { BWA_MEM as BWA_MEM2        } from '../../modules/bwa/mem/main'
+include { SAMBAMBA_MERGE             } from '../../modules/sambamba/merge/main'
+include { SAMTOOLS_SORT as SAM_SORT  } from '../../modules/samtools/sort/main'
+include { SAMTOOLS_SORT as SAM_SORT2 } from '../../modules/samtools/sort/main'
+include { SAMBAMBA_MARKDUP           } from '../../modules/sambamba/markdup/main'
+include { SAMBAMBA_FLAGSTAT          } from '../../modules/sambamba/flagstat/main'
+include { GATK4_BASERECALIBRATOR     } from '../../modules/gatk4/baserecalibrator/main'
+include { GATK4_APPLYBQSR            } from '../../modules/gatk4/applybqsr/main'
+include { SAMTOOLS_STATS             } from '../../modules/samtools/stats/main'
+include { SAMTOOLS_CONVERT           } from '../../modules/samtools/convert/main'
 
 
 workflow ALIGN_MARKDUP_BQSR_STATS {
@@ -40,25 +41,29 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
         //Split trimmed reads into 2 parts
         SEQKIT_SPLIT2 ( reads )
         ch_versions = ch_versions.mix(SEQKIT_SPLIT2.out.versions)
-         BWA_MEM1 ( SEQKIT_SPLIT2.out.reads_part1, bwa_index, [[id:'genome'],fasta], val_sort_bam )
-         BWA_MEM2 ( SEQKIT_SPLIT2.out.reads_part2, bwa_index, [[id:'genome'],fasta], val_sort_bam )
+        BWA_MEM1 ( SEQKIT_SPLIT2.out.reads_part1, bwa_index, [[id:'genome'],fasta], val_sort_bam )
+        BWA_MEM2 ( SEQKIT_SPLIT2.out.reads_part2, bwa_index, [[id:'genome'],fasta], val_sort_bam )
         ch_versions = ch_versions.mix(BWA_MEM1.out.versions)
-        SAMBAMBA_MERGE ( BWA_MEM1.out.bam.combine(BWA_MEM2.out.bam, by:0) )
+        SAM_SORT  (BWA_MEM1.out.bam)
+        SAM_SORT2 (BWA_MEM2.out.bam)
+
+        SAMBAMBA_MERGE ( SAM_SORT.out.bam.combine(SAM_SORT2.out.bam, by:0)
+                            .map { it -> tuple(it[0],[it[1],it[2]])} )
         // Sort bam with samtools
-        SAMTOOLS_SORT ( SAMBAMBA_MERGE.out.bam , [[id:'genome'],fasta] )
-        ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions)
+        ch_sort_bam = SAM_SORT ( SAMBAMBA_MERGE.out.bam , [[id:'genome'],fasta] )
+        ch_versions = ch_versions.mix(SAM_SORT.out.versions)
     } else {
-        BWA_MEM ( reads, bwa_index, [[id:'genome'],fasta], val_sort_bam )
-        ch_versions = ch_versions.mix(BWA_MEM.out.versions)
+        BWA_MEM1 ( reads, bwa_index, [[id:'genome'],fasta], val_sort_bam )
+        ch_versions = ch_versions.mix(BWA_MEM1.out.versions)
         // Sort bam with samtools
-        SAMTOOLS_SORT ( BWA_MEM.out.bam , [[id:'genome'],fasta] )
-        ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions)
+        ch_sort_bam = SAM_SORT ( BWA_ME1.out.bam , [[id:'genome'],fasta] )
+        ch_versions = ch_versions.mix(SAM_SORT.out.versions)
     }
 
     //
     // Run sambamba deduplicate and flagstat
     //
-    SAMBAMBA_MARKDUP ( SAMTOOLS_SORT.out.bam )
+    SAMBAMBA_MARKDUP ( ch_sort_bam )
     ch_versions = ch_versions.mix(SAMBAMBA_MARKDUP.out.versions)
 
     //
