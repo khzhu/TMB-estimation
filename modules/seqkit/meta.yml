@@ -24,7 +24,17 @@ input:
         description: FastQ files
         pattern: "*.{fq.gz/fastq.gz}"
 output:
-  - reads:
+  - reads_part1:
+      - meta:
+          type: map
+          description: |
+            Groovy Map containing sample information
+            e.g. [ id:'test', single_end:false ]
+      - "**/*.gz":
+          type: file
+          description: Split fastq files
+          pattern: "*.{fq.gz/fastq.gz}"
+  - reads_part2:
       - meta:
           type: map
           description: |

@@ -6,7 +6,8 @@ process SEQKIT_SPLIT2 {
     tuple val(meta), path(reads)
 
     output:
-    tuple val(meta), path("**/*.gz"), emit: reads
+    tuple val(meta), path("**/*.part_001.fastq.gz"), emit: reads_part1
+    tuple val(meta), path("**/*.part_002.fastq.gz"), emit: reads_part2
     path "versions.yml"             , emit: versions
 
     when:

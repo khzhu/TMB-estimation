@@ -3,7 +3,7 @@
 //
 
 include { SEQKIT_SPLIT2          } from '../../modules/seqkit/main'
-include { BWA_MEM                } from '../../modules/bwa/mem/main'
+include { BWA_MEM as BWA_MEM1    } from '../../modules/bwa/mem/main'
 include { BWA_MEM as BWA_MEM2    } from '../../modules/bwa/mem/main'
 include { SAMBAMBA_MERGE         } from '../../modules/sambamba/merge/main'
 include { SAMTOOLS_SORT          } from '../../modules/samtools/sort/main'
@@ -40,14 +40,10 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
         //Split trimmed reads into 2 parts
         SEQKIT_SPLIT2 ( reads )
         ch_versions = ch_versions.mix(SEQKIT_SPLIT2.out.versions)
-        split_reads = SEQKIT_SPLIT2.out.reads.branch{
-            part1 : it[1] =~ /^*_{N,T}_{1,2}*part_001*/
-            part2 : it[1] =~ /^*_{N,T}_{1,2}*part_002*/
-        }
-        BWA_MEM  ( split_reads.part1, bwa_index, [[id:'genome'],fasta], val_sort_bam )
-        BWA_MEM2 ( split_reads.part2, bwa_index, [[id:'genome'],fasta], val_sort_bam )
-        ch_versions = ch_versions.mix(BWA_MEM.out.versions)
-        SAMBAMBA_MERGE ( BWA_MEM.out.bam.combine(BWA_MEM2.out.bam, by:0) )
+         BWA_MEM1 ( SEQKIT_SPLIT2.out.reads_part1, bwa_index, [[id:'genome'],fasta], val_sort_bam )
+         BWA_MEM2 ( SEQKIT_SPLIT2.out.reads_part2, bwa_index, [[id:'genome'],fasta], val_sort_bam )
+        ch_versions = ch_versions.mix(BWA_MEM1.out.versions)
+        SAMBAMBA_MERGE ( BWA_MEM1.out.bam.combine(BWA_MEM2.out.bam, by:0) )
         // Sort bam with samtools
         SAMTOOLS_SORT ( SAMBAMBA_MERGE.out.bam , [[id:'genome'],fasta] )
         ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions)
