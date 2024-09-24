@@ -67,6 +67,6 @@ workflow {
                 file(params.vep_cache, checkIfExists: true))
     ch_versions = ch_versions.mix( SNV_STRELKA2.out.versions )
 
-    TMB_CALIBER ( SNV_MUTECT2.out.maf.combine(SNV_STRELKA2.out.maf, by:0))
+    TMB_CALIBER ( SNV_MUTECT2.out.maf, SNV_STRELKA2.out.maf )
     ch_versions = ch_versions.mix(TMB_CALIBER.out.versions)
 }

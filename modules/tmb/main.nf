@@ -7,17 +7,21 @@ process TMB_CALIBRATION {
     label 'process_medium'
 
     input:
-    tuple val(meta), path(maf_file)
+    tuple val(meta), path(mutect2_maf), path(strelka2_maf)
 	
     output:
     tuple val(meta), path("*.tsv"), emit: tmb
+    tuple val(meta), path("*.maf"), emit: maf
     path "versions.yml"             , emit: versions
 	
 
     //Calculate tumor mutation burden per sample
     script:
+    def prefix        = task.ext.prefix ?: "tmb"
+    def out_maf       = 'all.maf'
     """
-	R $projectDir/bin/calculate_tmb.R -m ${maf_file} -o ${prefix}.tmb.tsv
+    cat $mutect2_maf $strelka2_maf > $out_maf
+    Rscript bin/calculate_tmb.R -m $out_maf -o ${prefix}.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
