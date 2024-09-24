@@ -4,7 +4,7 @@ process VEP {
     label 'process_medium'
 
     input:
-    tuple val(meta), path(input_vcf)
+    tuple val(meta),  path(input_vcf)
     tuple val(meta2), path(fasta)       // Required
     tuple val(meta3), path(gnomad_vcf), path(gnomad_vcf_tbi)
     tuple val(meta4), path(cosmic_vcf), path(cosmic_vcf_tbi)

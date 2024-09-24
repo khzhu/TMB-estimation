@@ -62,7 +62,7 @@ workflow SNV_MUTECT2 {
                         .groupTuple()
     MUTECT2_MERGEVCFS ( ch_vcf_files, ch_dict )
 
-    MUTECT2_VEP ( MUTECT2_MERGEVCFS.out.vcf,
+    MUTECT2_VEP ( MUTECT2_MERGEVCFS.out.vcf.combine(MUTECT2_MERGEVCFS.out.tbi, by:0),
                     ch_fasta,
                     ch_germline_resource,
                     ch_cosmic_vcf,

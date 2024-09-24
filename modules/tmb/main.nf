@@ -11,6 +11,7 @@ process TMB_CALIBRATION {
 	
     output:
     tuple val(meta), path("*.tsv"), emit: tmb
+    path "versions.yml"             , emit: versions
 	
 
     //Calculate tumor mutation burden per sample
@@ -22,6 +23,5 @@ process TMB_CALIBRATION {
     "${task.process}":
         R: \$(echo \$(R --version 2>&1)
     END_VERSIONS
-    """
     """
 }

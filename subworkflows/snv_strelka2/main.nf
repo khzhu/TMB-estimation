@@ -53,7 +53,7 @@ workflow SNV_STRELKA2 {
     STRELKA2_MERGEVCFS ( ch_input_vcfs, ch_dict )
     ch_versions = ch_versions.mix(STRELKA2_MERGEVCFS.out.versions)
 
-    STRELKA2_VEP ( STRELKA2_MERGEVCFS.out.vcf,
+    STRELKA2_VEP ( STRELKA2_MERGEVCFS.out.vcf.combine(STRELKA2_MERGEVCFS.out.tbi, by:0),
                     ch_fasta,
                     ch_gnomad_vcf,
                     ch_cosmic_vcf,
