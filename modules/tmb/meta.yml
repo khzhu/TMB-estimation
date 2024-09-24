@@ -1,0 +1,38 @@
+name: "tmb_calibration"
+description: |
+  Derive TMB estimates from targeted exome capture seqeueuncing data
+keywords:
+  - rscript
+  - dplyr
+  - tmb
+  - maf
+components:
+  - r/dplyr
+  - r/optparse
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing reference information.
+        e.g. [ id:'test']
+  - input_maf:
+      type: file
+      description: Input variants in MAF format
+      pattern: "*.maf"
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing genome reference information
+        e.g. [ id:'test' ]
+  - tmb:
+      type: file
+      description: tumor mutational burden estimations
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+authors:
+  - "@kelseyz"
+maintainers:
+  - "@kelseyz"

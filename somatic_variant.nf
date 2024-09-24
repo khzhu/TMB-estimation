@@ -5,7 +5,6 @@ import groovy.json.JsonSlurper
 
 include { SNV_MUTECT2              } from './subworkflows/snv_mutect2/main'
 include { SNV_STRELKA2             } from './subworkflows/snv_strelka2/main'
-include { TMB_CALIBER              } from './subworkflows/calculate_tmb/main'
 
 // main workflow
 workflow {
@@ -66,7 +65,4 @@ workflow {
                                     file(params.cosmic_vcf_tbi, checkIfExists: true)],
                 file(params.vep_cache, checkIfExists: true))
     ch_versions = ch_versions.mix( SNV_STRELKA2.out.versions )
-
-    TMB_CALIBER ( SNV_MUTECT2.out.maf.combine(SNV_STRELKA2.out.maf, by:0))
-    ch_versions = ch_versions.mix(TMB_CALIBER.out.versions)
 }
