@@ -19,10 +19,13 @@ process TMB_CALIBRATION {
     script:
     def prefix        = task.ext.prefix ?: "tmb"
     def out_maf       = 'all.maf'
-    def input_list = maf_files.collect{ "$it"}.join(' ')
+    def mut2_maf      = 'mutect2_out.maf'
+    def strelk_maf    = 'strelka2_out.maf'
 
+    maf_files[0].collectFile( name: ${mut2_maf}, keepHeader:true, skip:2 )
+    maf_files[1].collectFile( name: ${strelk_maf}, keepHeader:false, skip:2 )
     """
-    cat $input_list > $out_maf
+    cat $mut2_maf $strelk_maf > $out_maf
     Rscript bin/calculate_tmb.R -m $out_maf -o ${prefix}.tsv
 
     cat <<-END_VERSIONS > versions.yml

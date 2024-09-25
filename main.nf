@@ -67,11 +67,6 @@ workflow {
                 file(params.vep_cache, checkIfExists: true))
     ch_versions = ch_versions.mix( SNV_STRELKA2.out.versions )
 
-    mutect2_out = SNV_MUTECT2.out.maf
-                    .collectFile( name: 'mutect2_out.maf', keepHeader:true, skip:2 )
-    strelka2_out = SNV_STRELKA2.out.maf
-                    .collectFile( name: 'strelka2_out.maf', keepHeader:false, skip:2 )
-
-    TMB_CALIBER ( [id:'ccs_f1', [mutect2_out, strelka2_out] )
+    TMB_CALIBER ( [[id:'ccs'], [SNV_MUTECT2.out.maf, SNV_STRELKA2.out.maf] ])
     ch_versions = ch_versions.mix(TMB_CALIBER.out.versions)
 }
