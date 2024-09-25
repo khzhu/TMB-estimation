@@ -5,16 +5,12 @@ include { TMB_CALIBRATION  } from '../../modules/tmb/main'
 workflow TMB_CALIBER {
 
     take:
-    mutect2_maf        // channel: [mandatory] [ val(meta), path(mutect2_maf) ]
-    strelka2_maf       // channel: [mandatory] [ val(meta), path(strelka2_maf) ]
+    maf_files     // channel: [mandatory] [ val(meta), path(maf) ]
 
     main:
     ch_versions         = Channel.empty()
 
-    mutect2_out = mutect2_maf.collectFile( name: 'mutect2_out.maf', sort: { it.size() }, keepHeader:true, skip:2 )
-    strelka2_out = strelka2_maf.collectFile( name: 'strelka2_out.maf', sort: { it.size() }, keepHeader:false, skip:2 )
-
-    TMB_CALIBRATION ( [[id:'ccs'], mutect2_out, strelka2_out ] )
+    TMB_CALIBRATION ( maf_files )
     ch_versions = ch_versions.mix(TMB_CALIBRATION.out.versions)
 
     emit:

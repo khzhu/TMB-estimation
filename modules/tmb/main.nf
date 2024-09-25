@@ -7,7 +7,7 @@ process TMB_CALIBRATION {
     label 'process_medium'
 
     input:
-    tuple val(meta), path(mutect2_maf), path(strelka2_maf)
+    tuple val(meta), path(maf_files)
 	
     output:
     tuple val(meta), path("*.tsv"), emit: tmb
@@ -19,8 +19,10 @@ process TMB_CALIBRATION {
     script:
     def prefix        = task.ext.prefix ?: "tmb"
     def out_maf       = 'all.maf'
+    def input_list = maf_files.collect{ "$it"}.join(' ')
+
     """
-    cat $mutect2_maf $strelka2_maf > $out_maf
+    cat $input_list > $out_maf
     Rscript bin/calculate_tmb.R -m $out_maf -o ${prefix}.tsv
 
     cat <<-END_VERSIONS > versions.yml
