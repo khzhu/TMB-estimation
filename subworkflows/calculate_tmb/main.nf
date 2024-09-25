@@ -15,5 +15,6 @@ workflow TMB_CALIBER {
 
     emit:
     tmb    = TMB_CALIBRATION.out.tmb         // channel: [ val(meta), path(tmb) ]
+    maf    = TMB_CALIBRATION.out.maf         // channel: [ val(meta), path(maf) ]
     versions = ch_versions                   // channel: [ path(versions.yml) ]
 }

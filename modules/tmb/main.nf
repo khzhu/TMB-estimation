@@ -11,15 +11,18 @@ process TMB_CALIBRATION {
 	
     output:
     tuple val(meta), path("*.tsv"), emit: tmb
+    tuple val(meta), path("*.maf"), emit: maf
     path "versions.yml"             , emit: versions
 	
 
     //Calculate tumor mutation burden per sample
     script:
-    def prefix        = task.ext.prefix ?: "tmb"
-
+    def prefix     = task.ext.prefix ?: "tmb"
+    def input_list = input_maf.collect{ "$it"}.join(' ')
+    def out_maf    = "${prefix}.maf"
     """
-    Rscript bin/calculate_tmb.R -m $input_maf -o ${prefix}.tsv
+    cat $input_list > $out_maf
+    Rscript bin/calculate_tmb.R -m $out_maf -o ${prefix}.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

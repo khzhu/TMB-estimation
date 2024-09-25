@@ -67,8 +67,13 @@ workflow {
                 file(params.vep_cache, checkIfExists: true))
     ch_versions = ch_versions.mix( SNV_STRELKA2.out.versions )
 
-    Channel.fromPath(params.work_dir + '/*/*/*.maf')
-        .collectFile( name: 'result.maf', sort: { it.size() }, keepHeader:true, skip:3 )
-    TMB_CALIBER ( [[id:'ccs'], 'result.maf' ])
+    SNV_MUTECT2.out.maf
+        .map { it -> it[1] }
+        .collectFile( name: 'mutect2_merged.maf', keepHeader:true, skip:2, storeDir:params.store_dir )
+
+    SNV_STRELKA2.out.maf
+        .map { it -> it[1] }
+        .collectFile( name: 'strelka2_merged.maf', keepHeader:false, skip:2, storeDir:params.store_dir )
+    TMB_CALIBER ( [[id:'ccs'], Channel.fromPath("${params.store_dir}/*.maf", checkIfExists:true))
     ch_versions = ch_versions.mix(TMB_CALIBER.out.versions)
 }

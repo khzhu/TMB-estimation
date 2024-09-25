@@ -29,6 +29,10 @@ output:
       type: file
       description: tumor mutational burden estimations
       pattern: "*.tsv"
+  - maf:
+      type: file
+      description: selected variants used for TMB estimation
+      pattern: "*.maf"
   - versions:
       type: file
       description: File containing software versions

@@ -27,7 +27,10 @@ output:
         e.g. [ id:'test' ]
   - tmb:
       type: file
-      description: tumor mutational burden estimations
+      description: tumor mutational burden values
+  - maf:
+      type: file
+      description: selected variants in MAF format for TMB estimation
   - versions:
       type: file
       description: File containing software versions
