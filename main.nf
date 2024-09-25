@@ -67,6 +67,8 @@ workflow {
                 file(params.vep_cache, checkIfExists: true))
     ch_versions = ch_versions.mix( SNV_STRELKA2.out.versions )
 
-    TMB_CALIBER ( [[id:'ccs'], [SNV_MUTECT2.out.maf, SNV_STRELKA2.out.maf] ])
+    Channel.fromPath(params.work_dir + '/*/*/*.maf')
+        .collectFile( name: 'result.maf', sort: { it.size() }, keepHeader:true, skip:3 )
+    TMB_CALIBER ( [[id:'ccs'], 'result.maf' ])
     ch_versions = ch_versions.mix(TMB_CALIBER.out.versions)
 }

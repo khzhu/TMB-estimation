@@ -15,8 +15,8 @@ input:
       description: |
         Groovy Map containing reference information.
         e.g. [ id:'test']
-  - maf_files:
-      type: list
+  - input_maf:
+      type: file
       description: Path to input MAF files
       pattern: "*.maf"
 output:
@@ -29,10 +29,6 @@ output:
       type: file
       description: tumor mutational burden estimations
       pattern: "*.tsv"
-  - maf:
-      type: file
-      description: somatic variants in a MAF format
-      pattern: "*.maf"
   - versions:
       type: file
       description: File containing software versions
