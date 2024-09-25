@@ -15,9 +15,13 @@ input:
       description: |
         Groovy Map containing reference information.
         e.g. [ id:'test']
-  - input_maf:
+  - mutect2_maf:
       type: file
-      description: Path to input MAF files
+      description: Path to input mutect2 MAF files
+      pattern: "*.maf"
+  - strelka2_maf:
+      type: file
+      description: Path to input strelka2 MAF files
       pattern: "*.maf"
 output:
   - meta:

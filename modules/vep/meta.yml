@@ -25,6 +25,10 @@ input:
       type: file
       description: |
         Input VCF file for VEP annotation.
+  - input_vcf_tbi:
+      type: file
+      description: |
+        Input VCF index file for VEP annotation.
   - meta2:
       type: map
       description: |
