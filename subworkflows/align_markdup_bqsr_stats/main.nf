@@ -57,7 +57,7 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
         BWA_MEM1 ( reads, bwa_index, [[id:'genome'],fasta], val_sort_bam )
         ch_versions = ch_versions.mix(BWA_MEM1.out.versions)
         // Sort bam with samtools
-        SAM_SORT ( BWA_ME1.out.bam , [[id:'genome'],fasta] )
+        SAM_SORT ( BWA_MEM1.out.bam , [[id:'genome'],fasta] )
         ch_versions = ch_versions.mix(SAM_SORT.out.versions)
     }
 

@@ -72,6 +72,7 @@ workflow {
     ch_paired_bam = split_sample_bam.tumor.combine(split_sample_bam.normal, by: 1)
     ch_paired_bai = split_sample_bai.tumor.combine(split_sample_bai.normal, by: 1)
 
+    bed_files = Channel.fromPath(params.tumor_panel_bed_files, checkIfExists: true)
     ch_input_files = ch_paired_bam.combine(ch_paired_bai, by:1).combine(bed_files)
                     .map { meta, input_bams, input_index_files, intervals ->
                         new_meta = meta.clone()
@@ -94,7 +95,7 @@ workflow {
     ch_versions = ch_versions.mix( SNV_MUTECT2.out.versions )
 
     // calling strelka2 somatic variants
-    SNV_STRELKA2 (samples,
+    SNV_STRELKA2 (ch_paired_bam.combine(ch_paired_bai, by:1),
                 [[ id:'genome'], file(params.reference_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.fai_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.dict_file, checkIfExists: true)],
