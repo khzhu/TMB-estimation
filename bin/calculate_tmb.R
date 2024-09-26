@@ -1,4 +1,9 @@
 #!/usr/bin/env Rscript
+
+#' title: "Tumor Mutational Burden Estimation"
+#' author: "Kelsey Zhu"
+#' date: "September 24, 2024"
+
 library(dplyr)
 library(optparse)
 
@@ -45,4 +50,5 @@ calculate_tmb <- function(maf_file, out_tsv, tumor_coverage, alt_count, tumor_va
   t_value <- apply(tmb,1, function(x) round(x/round(5387125/10^6,2),2)  )
   write.table(data.frame(t_value), file=out_tsv, quote=FALSE, sep="\t", row.names=TRUE, col.names=FALSE)
 }
+# Estimate TMB
 calculate_tmb(opt$maf, opt$out, opt$depth, opt$count, opt$vaf)
