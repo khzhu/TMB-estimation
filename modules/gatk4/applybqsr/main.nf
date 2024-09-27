@@ -3,8 +3,7 @@ process GATK4_APPLYBQSR {
     label 'process_low'
 
     input:
-    tuple val(meta), path(bam_file)
-    tuple val(meta), path(bqsr_table)
+    tuple val(meta), path(bam_file), path(bqsr_table)
     path  intervals
     tuple val(meta2), path(fasta)
     tuple val(meta2), path(fai)

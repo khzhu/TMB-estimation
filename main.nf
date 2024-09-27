@@ -64,7 +64,7 @@ workflow {
                             tumor   : it[1] =~ /(\_T.sort\.dedup\.recal\.bam)$/
                             normal  : it[1] =~ /(\_N.sort\.dedup\.recal\.bam)$/
                     }
-    split_sample_bai = ALIGN_MARKDUP_BQSR_STATS.out.bam
+    split_sample_bai = ALIGN_MARKDUP_BQSR_STATS.out.bai
                     .branch{
                             tumor   : it[1] =~ /(\_T.sort\.dedup\.recal\.bai)$/
                             normal  : it[1] =~ /(\_N.sort\.dedup\.recal\.bai)$/
