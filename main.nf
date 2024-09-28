@@ -76,6 +76,8 @@ workflow {
     ch_input_files = ch_paired_bam.combine(ch_paired_bai, by:1).combine(bed_files)
                     .map { meta, input_bams, input_index_files, intervals ->
                         new_meta = meta.clone()
+                        new_meta.id = new_meta.pid
+                        new_meta.pid = ""
                         new_meta.sid = intervals.baseName != "no_intervals" ? new_meta.id + "_" + intervals.baseName : new_meta.id
                         intervals = intervals.baseName != "no_intervals" ? intervals : []
                         [new_meta, input_bams, input_index_files, intervals]
@@ -95,7 +97,14 @@ workflow {
     ch_versions = ch_versions.mix( SNV_MUTECT2.out.versions )
 
     // calling strelka2 somatic variants
-    SNV_STRELKA2 (ch_paired_bam.combine(ch_paired_bai, by:1),
+    ch_input_files2 = ch_paired_bam.combine(ch_paired_bai, by:1)
+                .map { meta, input_bams, input_index_files ->
+                    new_meta = meta.clone()
+                    new_meta.id = new_meta.pid
+                    new_meta.pid = ""
+                    [new_meta, input_bams, input_index_files]
+                }
+    SNV_STRELKA2 (ch_input_files2,
                 [[ id:'genome'], file(params.reference_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.fai_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.dict_file, checkIfExists: true)],

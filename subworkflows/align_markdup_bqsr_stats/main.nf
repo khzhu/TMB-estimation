@@ -80,7 +80,7 @@ workflow ALIGN_MARKDUP_BQSR_STATS {
                             snp_known_sites, snp_known_sites_tbi,
                             indel_known_sites, indel_known_sites_tbi)
     GATK4_APPLYBQSR ( SAMBAMBA_MARKDUP.out.bam.combine(
-                        GATK4_BASERECALIBRATOR.out.table, by: [0,1]),
+                        GATK4_BASERECALIBRATOR.out.table, by: 0),
                         intervals, [[id:'genome'],fasta], fai, dict)
     ch_versions = ch_versions.mix(GATK4_APPLYBQSR.out.versions)
 
