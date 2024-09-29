@@ -25,10 +25,23 @@ curl -s https://get.nextflow.io | bash
 chmod +x nextflow
 ```
 3. The input sample JSON file should have at least five columns: specimen_id, patient_id, tissue (tumor source site), purity (estimated tumor cell percentages in tissue samples), and read1/2 (paired end raw reads).
+```
+[
+    {
+        "specimen_id": "CPCT1",
+        "patient_id":"CPCT1",
+        "tissue": "other",
+        "purity": 100,
+        "read1":"~/workspace/dsl2/data/CPCT12345678R/CPCT1/CPCT12345678R_AHHKYHDSXX_S13_L001_R1_001.fastq.gz",
+        "read2":"~/workspace/dsl2/data/CPCT12345678R/CPCT1/CPCT12345678R_AHHKYHDSXX_S13_L001_R2_001.fastq.gz"
+    }
+]
+```
 
 4. Finally, you can use the following commands to start an interactive session in the McCleary cluster and submit a job. It is recommended that you export the TMPDIR variable to somewhere other than the default directory on McCleary which is /tmp. Alternatively,
 you can use the -w option to set a temp directory outside your home directory for the large number of intermediate files produced by each process.
 ```
+ssh user123@mccleary.ycrc.yale.edu
 salloc -p ycga -c 1 -t 00-3:00 --mem=8000
 ```
 ```

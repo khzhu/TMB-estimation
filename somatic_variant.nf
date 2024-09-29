@@ -3,9 +3,9 @@ nextflow.enable.dsl=2
 
 import groovy.json.JsonSlurper
 
-include { SNV_MUTECT2              } from './subworkflows/snv_mutect2/main'
-include { SNV_STRELKA2             } from './subworkflows/snv_strelka2/main'
-include { TMB_CALIBER              } from './subworkflows/calculate_tmb/main'
+include { SNV_MUTECT2  } from './subworkflows/snv_mutect2/main'
+include { SNV_STRELKA2 } from './subworkflows/snv_strelka2/main'
+include { TMB_CALIBER  } from './subworkflows/calculate_tmb/main'
 
 // main workflow
 workflow {
@@ -71,12 +71,12 @@ workflow {
     mutect2_maf = SNV_MUTECT2.out.maf
         .map { it -> it[1] }
         .collectFile( name: 'mutect2_merged.maf', keepHeader:true, skip:2, storeDir:params.store_dir )
-        .map { [ [ id:'f1'], it ] }
+        .map { [ [ id:'tmb'], it ] }
 
     strelka2_maf = SNV_STRELKA2.out.maf
         .map { it -> it[1] }
         .collectFile( name: 'strelka2_merged.maf', keepHeader:false, skip:2, storeDir:params.store_dir )
-        .map { [ [ id:'f1'], it ] }
+        .map { [ [ id:'tmb'], it ] }
 
     TMB_CALIBER ( mutect2_maf, strelka2_maf )
     ch_versions = ch_versions.mix(TMB_CALIBER.out.versions)

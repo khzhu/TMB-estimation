@@ -59,27 +59,36 @@ workflow {
                 file(params.known_indel_vcf_tbi, checkIfExists: true),
                 params.split_reads)
     ch_versions = ch_versions.mix( ALIGN_MARKDUP_BQSR_STATS.out.versions )
-    ch_sample_bams = ALIGN_MARKDUP_BQSR_STATS.out.bam
-                        .combin( ALIGN_MARKDUP_BQSR_STATS.out.bai, by:0 )
-                        .branch {
-                            meta, bam, bai ->
-                                tumor: meta.tissue != 'Normal'
-                                normal: meta.tissue == 'Normal'
-                        }
-    ch_paired_bams = ch_sample_bams.tumor.combine(ch_sample_bams.normal, by: 1)
 
+    // Somatic variant detection workflow
+    ALIGN_MARKDUP_BQSR_STATS.out.bam.combine(ALIGN_MARKDUP_BQSR_STATS.out.bai, by: 0)
+        .branch{ meta, bam, bai ->
+            new_meta = meta.clone()
+            new_meta.id = meta.pid
+            new_meta.pid = ""
+            new_meta.tissue = ""
+            new_meta.purity = ""
+            tumor: bam.name.contains('_T')
+                return [new_meta, bam, bai]
+            normal: bam.name.contains('_N')
+                return [new_meta, bam, bai]
+        }
+        .set {ch_sample_bams}
+
+    ch_sample_bams.tumor.combine(ch_sample_bams.normal, by: 0)
+        .map { meta, tumor_bam, tumor_bai, normal_bam, normal_bai -> [meta, [tumor_bam, normal_bam], [tumor_bai, normal_bai]] }
+        .set { ch_paired_bams }
     bed_files = Channel.fromPath(params.tumor_panel_bed_files, checkIfExists: true)
-    ch_input_files = ch_paired_bams.combine(bed_files)
-                    .map { meta, input_bams, input_index_files, intervals ->
-                        new_meta = meta.clone()
-                        new_meta.id = new_meta.pid
-                        new_meta.pid = ""
-                        new_meta.sid = intervals.baseName != "no_intervals" ? new_meta.id + "_" + intervals.baseName : new_meta.id
-                        intervals = intervals.baseName != "no_intervals" ? intervals : []
-                        [new_meta, input_bams, input_index_files, intervals]
-                    }
+    ch_paired_bams.combine(bed_files)
+        .map { meta, input_bams, input_index_files, intervals ->
+            new_meta = meta.clone()
+            new_meta.sid = intervals.baseName != "no_intervals" ? new_meta.id + "_" + intervals.baseName : new_meta.id
+            intervals = intervals.baseName != "no_intervals" ? intervals : []
+            [new_meta, input_bams, input_index_files, intervals]
+        }
+        .set {ch_input_files}
     // calling mutect2 somatic variants
-    SNV_MUTECT2 (ch_paired_bams,
+    SNV_MUTECT2 (ch_input_files,
                 [[ id:'genome'], file(params.reference_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.fai_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.dict_file, checkIfExists: true)],
@@ -93,14 +102,7 @@ workflow {
     ch_versions = ch_versions.mix( SNV_MUTECT2.out.versions )
 
     // calling strelka2 somatic variants
-    ch_input_files2 = ch_paired_bams
-                        .map { meta, input_bams, input_index_files ->
-                            new_meta = meta.clone()
-                            new_meta.id = new_meta.pid
-                            new_meta.pid = ""
-                            [new_meta, input_bams, input_index_files]
-                        }
-    SNV_STRELKA2 (ch_input_files2,
+    SNV_STRELKA2 (ch_paired_bams,
                 [[ id:'genome'], file(params.reference_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.fai_file, checkIfExists: true)],
                 [[ id:'genome'], file(params.dict_file, checkIfExists: true)],
