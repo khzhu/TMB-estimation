@@ -49,8 +49,26 @@ module load ANTLR/2.7.7-GCCcore-12.2.0-Java-11
 ```
 ```
 nextflow run main.nf -profile hg19 \
---output_dir /vast/palmer/scratch/walther/shared/CCS/SolidTumor/v2_0_validation/RQ31352_RQ31353 \
+--output_dir /SolidTumor/v2_0_validation \
 --input_json samples.json \
--w /vast/palmer/scratch/walther/shared/CCS/SolidTumor/v2_0_validation/RQ31352_RQ31353/tmp \
+-w /SolidTumor/v2_0_validation/tmp \
 -bg
+```
+5. For multiple sample processing on HPC, you will need to use slurm job arrays to submit the workflow to avoid hitting [the limit of job submission per hour](https://docs.ycrc.yale.edu/clusters-at-yale/job-scheduling/common-job-failures/#rate-limits)
+```
+#!/bin/bash
+#SBATCH -J CPCT1
+#SBATCH --array=1-2%3
+#SBATCH --output=CPCT1_%A_%a.out
+#SBATCH --error=CPCT1_%A_%a.err
+#SBATCH -p ycga
+#SBATCH -t 8:0:0
+#SBATCH -N 1
+#SBATCH -c 6
+#SBATCH --mem=32G
+
+module load ANTLR/2.7.7-GCCcore-12.2.0-Java-11
+source ~/.bashrc
+nextflow run somatic_variant.nf --output_dir /SolidTumor/v2_0_validation --input_json samples.json \
+-w /SolidTumor/v2_0_validation/tmp -profile hg19 -resume
 ```
