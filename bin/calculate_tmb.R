@@ -47,7 +47,7 @@ calculate_tmb <- function(maf_file, out_tsv, tumor_coverage, alt_count, tumor_va
   tmb_df <- tmb_df[!duplicated(tmb_df$var_id),]
   # calcualte TMB
   tmb <- data.frame(unclass(table(tmb_df$Tumor_Sample_Barcode)))
-  t_value <- apply(tmb,1, function(x) round(x/round(5387125/10^6,2),2)  )
+  t_value <- apply(tmb,1, function(x) round(x/round(4701537/10^6,2),2)  )
   write.table(data.frame(t_value), file=out_tsv, quote=FALSE, sep="\t", row.names=TRUE, col.names=FALSE)
 }
 # Estimate TMB
