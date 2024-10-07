@@ -12,7 +12,55 @@ This pipeline starts from paired-end fastq data (.fastq.gz), and is meant to acc
 
 ## Containers
 The containers directory contains instructions and recipes for building Singularity containers used in the pipeline. Singularity containers are used on the Yale McCleary HPC cluster. The current pipeline configuration for McCleary uses .simg files stored in a shared location on the file system.
-
+## Directory structure
+```
+TMB-estimation/
+├── bin
+│   └── calculate_tmb.R
+├── modules
+│   ├── bcftools
+│   │   └── norm
+│   │       ├── main.nf
+│   │       └── meta.yml
+│   ├── bwa
+│   │   ├── index
+│   │   │   ├── main.nf
+│   │   │   └── meta.yml
+│   │   └── mem
+│   │       ├── main.nf
+│   │       └── meta.yml
+│   ...
+│   ├── vcf2maf
+│   │   ├── main.nf
+│   │   └── meta.yml
+│   └── vep
+│       ├── main.nf
+│       └── meta.yml
+└── subworkflows
+    ├── fastq/trim/fastqc
+    │   ├── main.nf
+    │   └── meta.yml
+    ├── index genome
+    │   ├── main.nf
+    │   ├── meta.yml
+    │   └── nextflow.config
+    ├── alignment
+    │   ├── main.nf
+    │   ├── meta.yml
+    │   └── nextflow.config
+    ├── mutect2/strelka2
+    │   ├── main.nf
+    │   ├── meta.yml
+    │   └── nextflow.config
+    ├── tmb calibration
+    │   ├── main.nf
+    │   ├── meta.yml
+    │   └── nextflow.config
+├── nextflow.config
+├── samples.json
+├── README.md
+├── main.nf
+```
 ## Set up and run a workflow
 1. This repository should first be cloned from GitHub:
 ```

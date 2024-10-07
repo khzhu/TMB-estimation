@@ -1,0 +1,77 @@
+vars: {
+    d2-config: {
+      layout-engine: tala
+    }
+  }
+  direction: down
+
+  scripts.nf {
+    shape: page
+    style.multiple: true
+  }
+  parameters.yml {
+    shape: page
+    style.multiple: true
+  }
+  scripts.nf -> modules: software/tools
+  parameters.yml -> modules: inputs/outputs
+  modules {
+    shape: page
+    style.multiple: true
+  }
+  properties.config {
+    shape: page
+    style.multiple: true
+  }
+  metadata.yml {
+    shape: page
+    style.multiple: true
+  }
+
+  properties.config -> sub workflows: configuration
+  metadata.yml -> sub workflows: description
+  sub workflows {
+    shape: page
+    style.multiple: true
+  }
+  modules -> sub workflows: import
+  sub workflows -> Main workflow: pipeline
+  Sample Sheet {
+    shape: sql_table
+    specimen_id: specimen id
+    patient_id: patient id
+    tissue: tumor source site
+    purity: tumor cell percentages in tissue
+    read1/2: paired end raw reads
+  }
+
+    Main Workflow {
+        Trim sequence adapters  {
+            a: |
+                - remove sequencing adapters 
+                - generate QC reports
+                |
+        }
+        Align reads to genome  {
+            a: |
+                - map to the genome
+                - mark duplicates
+                - base quality score calibration
+                - generate aligment stats
+                - convert a bam to a cram
+            |
+        }
+        Trim sequence adapters -> Align reads to genome: trim
+        Somatic variant detection {
+            a: |
+                - variant calling with mutect2  
+                - variant calling with manta/strelka2  
+                - functional annotation with VEP 
+                - convert a vcf to MAF format
+                |
+          }
+        Align reads to genome ->  Somatic variant detection: discovery
+        Somatic variant detection -> TMB estimation: calculate
+      }
+
+      Sample Sheet -> Main workflow: Multiple sample processing
